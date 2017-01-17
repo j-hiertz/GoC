@@ -9,9 +9,10 @@ GC      gc;
 Display *display;
 int     screen;
 Window  win, root;
+XWindowAttributes attr;
 
 
-extern void draw_win();
+extern void draw_plateau(int width, int height);
 extern void mouse_clicked(int bouton, int x, int y);
 extern void key_pressed(KeySym code, char c, int x_souris, int y_souris);
 
@@ -66,10 +67,15 @@ void event_loop()
 	while(1)
 	{
 		XNextEvent (display, &ev);
+		XGetWindowAttributes(display, win, &attr);
+
 		switch (ev.type)
 		{
 		case Expose :
-			//draw_win();
+			printf("\n\n===EXPOSE===\nlargeur = %d\nhauteur = %d\n",attr.width,attr.height);
+			largeur_fenetre = attr.width;
+			hauteur_fenetre = attr.height;
+			draw_plateau(largeur_fenetre, hauteur_fenetre);
 			break;
 		case ButtonPress:
 			mouse_clicked(ev.xbutton.button,ev.xbutton.x,ev.xbutton.y);
@@ -135,7 +141,7 @@ void pixel(int x, int y)
 
 void string(int x, int y, char* chaine)
 {
-	XDrawString(display,win,gc,10,10, chaine, strlen(chaine));
+	XDrawString(display,win,gc,x,y, chaine, strlen(chaine));
 }
 
 
