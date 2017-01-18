@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/keysym.h> 
+#include <X11/keysym.h>
 
 
 
@@ -45,12 +45,12 @@ int height_win();
  */
 void color(float r, float v, float b);
 
- 
+
 /**
  * trace une ligne
  * x0,y0 point depart
  * x1,y1 point arrivee
- */ 
+ */
 void line(int x0, int y0, int x1, int y1);
 
 
@@ -93,4 +93,7 @@ void pixel(int x, int y);
  */
 void string(int x, int y, char* chaine);
 
-
+/**
+	* change la taille de la fenetre
+	*/
+void resize_window(char bord, int taille);
