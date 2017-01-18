@@ -2,36 +2,101 @@
 #include <stdlib.h>
 #include "dessine.h"
 
-int nbCase;
+int nbCase, espaceCase, tour;
+
+void draw_pion( int x, int y){
+
+	// On ne dessine pas hors du plateau
+	if(x < espaceCase || y < espaceCase || x > nbCase * espaceCase || y > nbCase * espaceCase) {
+		return;
+	}
+
+	// Tour du blanc
+	if(tour == -1){
+		color(1,1,1);
+	}
+	else { // Tour du noir
+		color(0,0,0);
+	}
+
+	// Taille du pion
+	filled_circle(x,y,(espaceCase /2)*0.85);
+
+}
+
+void draw_hoshi(int width, int height){
+
+	int i,j;
+	color(0,0,0);
+	printf("\nDessine les Hoshis");
+
+	switch(nbCase)
+	{
+		case 9:
+				for(i = 2; i <=6; i+=4){
+				for(j= 2; j<= 6; j+=4){
+					int posX = espaceCase + (j * espaceCase);
+					int posY = espaceCase + (i * espaceCase);
+					filled_circle(posX, posY, ((float)1.5 * espaceCase / 50) + 1.9);
+				}
+			}
+			break;
+		case 13:
+			for(i = 1; i <= 3; i++){
+				for(j = 1; j <= 3; j++){
+					int posX = espaceCase + (3 * j * espaceCase);
+					int posY = espaceCase + (3 * i * espaceCase);
+					filled_circle(posX, posY, ((float)2 * espaceCase / 50) + 1.9);
+				}				
+			}
+			break;
+		case 19:
+			for(i = 3; i <=15; i+=6){
+				for(j= 3; j<= 15; j+=6){
+					int posX = espaceCase + (j * espaceCase);
+					int posY = espaceCase + (i * espaceCase);
+					filled_circle(posX, posY, ((float)2.5 * espaceCase / 50) + 1.9);
+				}
+			}
+			break;
+	}
+}
 
 void draw_plateau(int width, int height)
 {
 	clear_win();
+	color(0,0,0);
+	
+	if(height < width) {
+		espaceCase = height / (nbCase + 1);
+	}
+	else {
+		espaceCase = width / (nbCase + 1);
+	}
 
-	int espaceLigne = (height - 20) / nbCase;
-	int espaceCol = (width - 20) / nbCase;
-
-	printf("\nEspacement entre ligne : %d\n",espaceLigne);
-	printf("\nEspacement entre colonne : %d\n",espaceCol);
+	printf("\nEspacement entre ligne : %d\n",espaceCase);
+	printf("\nEspacement entre colonne : %d\n",espaceCase);
 
 	int i;
 	
 	for(i=0; i < nbCase ; i++){
-		line(0, 10 + (espaceLigne * i), width-10, 10 + (espaceLigne * i));
+		line(espaceCase, espaceCase + (espaceCase * i), nbCase*espaceCase, espaceCase + (espaceCase * i));
 	}
 
 	for(i=0; i < nbCase ; i++){
-		line(10 + (espaceCol * i), 0, 10 + (espaceCol * i), height-10);
+		line(espaceCase + (espaceCase * i), espaceCase, espaceCase + (espaceCase * i), espaceCase * nbCase);
 	}
+
+	draw_hoshi(width, height);
 
 
 }
 
 void mouse_clicked(int bouton, int x, int y)
 {
-	printf("Bouton %d presse au coord. %d,%d \n",bouton,x,y);
-	color( 1.0,0.0,1.0);
-	filled_circle(x,y,10);
+	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
+	draw_pion(x,y);
+	tour *= -1;
 }
 
 
@@ -75,6 +140,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 	
 	int width, height;
+	tour = 1;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
