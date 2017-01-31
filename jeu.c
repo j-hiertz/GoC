@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include "dessine.h"
 
-int nbCase, espaceCase, tour, courFenetre;
-
 typedef struct sButton {
 	int w, h, x, y;
-	void (*draw_choix_taille)(int width, int height);
+	void (*foo)(int, int);
 } Button;
 
 Button* init_button( int x, int y, int w, int h) {
@@ -16,6 +14,17 @@ Button* init_button( int x, int y, int w, int h) {
 	btn->w = w;
 	btn->h = h;
 	return btn;
+}
+
+int nbCase, espaceCase, tour, courFenetre;
+Button** arrayButton = NULL;
+
+int arrayButton_size() {
+	int i = 0;
+	while(arrayButton[i] != NULL) {
+		i++;
+	}
+	return i;
 }
 
 void draw_pion( int x, int y){
@@ -103,11 +112,20 @@ void draw_plateau(int width, int height)
 
 	draw_hoshi(width, height);
 
-
 }
 
+void newParty() {
+	printf("NEW PARTY\n");
+}
+
+void loadParty() {
+	printf("LOAD PARTY\n");
+}
+
+// First screen menu - New party or Load party
 void draw_menu_load(int width, int height)
 {
+	// Resize screen under 600 pixel width or 400 pixel height
 	if(width < 600) {
 		resize_window(600, 0);
 	} else if (height < 400) {
@@ -117,7 +135,7 @@ void draw_menu_load(int width, int height)
 	char new_party[] = "Nouvelle partie";
 	char load_party[] = "Charger une partie";
 
-	// Calcul emplacement boutons
+	// Determines x, y & size of button
 	int btn1_w = (width / 5);
 	int btn1_h = btn1_w / 2;
 	int btn1_x = btn1_w;
@@ -129,24 +147,28 @@ void draw_menu_load(int width, int height)
 	int btn2_x = btn1_x + 2 * btn1_w;
 	int load_party_x = btn2_x + (btn1_w / 2) - 50;
 
+	// Button registering...
 	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h);
-	Button* btn2 = init_button(btn1_x, btn1_y, btn1_w, btn1_h);
+	Button* btn2 = init_button(btn2_x, btn1_y, btn1_w, btn1_h);
+	btn1->foo = &newParty;
+	btn2->foo = &loadParty;
+
+	arrayButton = malloc(sizeof(Button) * 2);
+	arrayButton[0] = btn1;
+	arrayButton[1] = btn2;
 
 	rectangle(btn1_x, btn1_y, btn1_w, btn1_h);
 	string(new_party_x, new_party_y, new_party);
-
-
 	rectangle(btn2_x, btn1_y, btn1_w, btn1_h);
 	string(load_party_x, new_party_y, load_party);
 }
 
-void draw_choix_taille(int width, int height) {
-	printf("SALUT %d %d", width, height);
-}
-
+// Manage changing window
 void refresh_manager(int width, int height)
 {
 	clear_win();
+	free(arrayButton);
+	arrayButton = NULL;
 	if(courFenetre == 0) {
 		draw_menu_load(width, height);
 	} else if (courFenetre == 1) {
@@ -154,9 +176,16 @@ void refresh_manager(int width, int height)
 	}
 }
 
-void mouse_clicked(int bouton, int x, int y)
-{
+// Handle user click
+void mouse_clicked(int bouton, int x, int y) {
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
+	int size = arrayButton_size();
+	for(int i = 0; i < size; i++) {
+		if(x > arrayButton[i]->x && x < (arrayButton[i]->x + arrayButton[i]->w) && y > arrayButton[i]->y && y < (arrayButton[i]->y + arrayButton[i]->h)){
+				printf("Click détecté dans le button n°%d\n", i);
+				arrayButton[i]->foo(1, 1);
+		}
+	}
 	draw_pion(x,y);
 	tour *= -1;
 }
