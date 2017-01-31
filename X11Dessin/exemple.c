@@ -31,8 +31,13 @@ void draw_win()
 			filled_rectangle(j,i,4,4);
 		}
 	}
+<<<<<<< HEAD
 
 	color(1,0,0);
+=======
+	
+	color(0.8,0.2,0.45);
+>>>>>>> 2619b1be64a74797de102883978147a989b6b557
 	for(j=0; j<width_win(); j+=20)
 		line(j,24, width_win()-j, height_win()-24);
 

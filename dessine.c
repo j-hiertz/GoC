@@ -146,7 +146,13 @@ void string(int x, int y, char* chaine)
 	XDrawString(display,win,gc,x,y, chaine, strlen(chaine));
 }
 
-void resize_window (int taille)
+void resize_window (int width, int height)
 {
-	XResizeWindow(display, win, taille, taille);
+	if(height == 0) {
+		height = attr.height;
+	}
+	if(width == 0) {
+		width = attr.width;
+	}
+	XResizeWindow(display, win, width, height);
 }
