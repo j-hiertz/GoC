@@ -5,7 +5,7 @@
  * 1er affichage + redessine si resize
  */
 void draw_win()
-{	
+{
 	// vide la fenetre
 	clear_win();
 
@@ -21,7 +21,7 @@ void draw_win()
 			pixel(j,i);
 		}
 	}
-		
+
 	for(i=height_win()/2; i<height_win(); i+=4)
 	{
 		for(j=0; j<width_win(); j+=4)
@@ -31,14 +31,19 @@ void draw_win()
 			filled_rectangle(j,i,4,4);
 		}
 	}
+<<<<<<< HEAD
+
+	color(1,0,0);
+=======
 	
 	color(0.8,0.2,0.45);
+>>>>>>> 2619b1be64a74797de102883978147a989b6b557
 	for(j=0; j<width_win(); j+=20)
 		line(j,24, width_win()-j, height_win()-24);
 
 	color(11,1,1);
 	string(5,5,"Test Affichage chaine");
-	
+
 }
 
 
@@ -84,7 +89,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 		default:
 			break;
 	}
-	
+
 	if (c>' ' && c<'z')
 		printf("char: %c \n",c);
 
@@ -93,8 +98,9 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 }
 
 
-int main() 
+int main()
 {
+	
 	init_win(400,400, "Essai",0.2,0.2,0.6);
 	event_loop();
 	return EXIT_SUCCESS;

@@ -13,6 +13,8 @@ XWindowAttributes attr;
 
 
 extern void draw_plateau(int width, int height);
+extern void refresh_manager(int width, int height);
+extern void draw_menu_load(int width, int height);
 extern void mouse_clicked(int bouton, int x, int y);
 extern void key_pressed(KeySym code, char c, int x_souris, int y_souris);
 
@@ -29,19 +31,19 @@ int height_win()
 
 void init_win(int w, int h, char* message, float r, float g, float b)
 {
-	if ((display = XOpenDisplay ("")) == NULL) 
+	if ((display = XOpenDisplay ("")) == NULL)
 	{
 		fprintf (stderr, "Can't open Display\n");
 		exit (1);
 	}
-	
+
 	largeur_fenetre = w;
 	hauteur_fenetre = h;
 	// recupere param pour creation fenetre
 	gc = DefaultGC (display, screen);
 	screen = DefaultScreen (display);
 	root = RootWindow (display, screen);
-	
+
 	int rr = 255*r;
 	int gg = 255*g;
 	int bb = 255*b;
@@ -52,12 +54,12 @@ void init_win(int w, int h, char* message, float r, float g, float b)
 	// filtre les evenements
 	XSelectInput (display, win, ExposureMask|ButtonPressMask|KeyPressMask);
 	// titre fenetre
-	XStoreName (display, win, message); 
+	XStoreName (display, win, message);
 	XMapWindow (display, win);
 }
 
 
-void event_loop() 
+void event_loop()
 {
 	char buffer[8];
 	KeySym touche;
@@ -75,7 +77,7 @@ void event_loop()
 			printf("\n\n===EXPOSE===\nlargeur = %d\nhauteur = %d\n",attr.width,attr.height);
 			largeur_fenetre = attr.width;
 			hauteur_fenetre = attr.height;
-			draw_plateau(largeur_fenetre, hauteur_fenetre);
+			refresh_manager(largeur_fenetre, hauteur_fenetre);
 			break;
 		case ButtonPress:
 			mouse_clicked(ev.xbutton.button,ev.xbutton.x,ev.xbutton.y);
@@ -144,4 +146,13 @@ void string(int x, int y, char* chaine)
 	XDrawString(display,win,gc,x,y, chaine, strlen(chaine));
 }
 
-
+void resize_window (int width, int height)
+{
+	if(height == 0) {
+		height = attr.height;
+	}
+	if(width == 0) {
+		width = attr.width;
+	}
+	XResizeWindow(display, win, width, height);
+}

@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "dessine.h"
-#include "goban.h"
+#ifndef LIBRARY_H
+	#define LIBRARY_H
+	#include "dessine.h"
+	#include "goban.h"
+	#include "menu.h"
+#endif
 
-int nbCase, espaceCase, tour;
+int nbCase, espaceCase, tour, courFenetre;
 
 void draw_pion( int x, int y){
 
@@ -48,7 +52,7 @@ void draw_hoshi(int width, int height){
 					int posX = espaceCase + (3 * j * espaceCase);
 					int posY = espaceCase + (3 * i * espaceCase);
 					filled_circle(posX, posY, ((float)2 * espaceCase / 50) + 1.9);
-				}				
+				}
 			}
 			break;
 		case 19:
@@ -67,7 +71,7 @@ void draw_plateau(int width, int height)
 {
 	clear_win();
 	color(0,0,0);
-	
+
 	if(height < width) {
 		espaceCase = height / (nbCase + 1);
 	}
@@ -79,7 +83,7 @@ void draw_plateau(int width, int height)
 	printf("\nEspacement entre colonne : %d\n",espaceCase);
 
 	int i;
-	
+
 	for(i=0; i < nbCase ; i++){
 		line(espaceCase, espaceCase + (espaceCase * i), nbCase*espaceCase, espaceCase + (espaceCase * i));
 	}
@@ -90,12 +94,71 @@ void draw_plateau(int width, int height)
 
 	draw_hoshi(width, height);
 
-
 }
 
-void mouse_clicked(int bouton, int x, int y)
+// Manage changing window
+void refresh_manager(int width, int height)
 {
+	clear_win();
+	freeButtons();
+	if(courFenetre == 0) {
+		draw_menu_load(width, height);
+	} else if (courFenetre == 1) {
+		draw_goban_size(width, height);
+	} else if (courFenetre == 2) {
+		draw_choix_adversaire(width, height);
+	} else if (courFenetre == 3) {
+		draw_plateau(width, height);
+	}
+}
+
+void newParty() {
+	courFenetre = 1;
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
+}
+
+void loadParty() {
+	courFenetre = 3;
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
+}
+
+void choixTaille() {
+	courFenetre = 2;
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
+}
+
+void setGoban19() {
+	nbCase =  19;
+	choixTaille();
+}
+
+void setGoban13() {
+	nbCase =  13;
+	choixTaille();
+}
+
+void setGoban9() {
+	nbCase =  9;
+	choixTaille();
+}
+
+void choixAdversaire() {
+	courFenetre = 3;
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
+}
+
+// Handle user click
+void mouse_clicked(int bouton, int x, int y) {
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
+	checkClick(x, y);
 	draw_pion(x,y);
 	tour *= -1;
 }
@@ -130,7 +193,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 		default:
 			break;
 	}
-	
+
 	if (c>' ' && c<'z')
 		printf("char: %c \n",c);
 
@@ -139,14 +202,15 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 }
 
 int main(int argc, char **argv) {
-	
+
 	int width, height;
+	courFenetre = 0;
 	tour = 1;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
 	}
-	
+
 	if(nbCase == 0){
 		nbCase = 9;
 	}
@@ -171,7 +235,6 @@ int main(int argc, char **argv) {
 
 	Goban *goban = malloc(sizeof *goban);
 	initPlateau(goban, width, height, nbCase);
-	
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
 	event_loop();
 	return EXIT_SUCCESS;
