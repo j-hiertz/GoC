@@ -4,7 +4,9 @@
 
 extern void newParty();
 extern void loadParty();
-extern void choixTaille();
+extern void setGoban19();
+extern void setGoban13();
+extern void setGoban9();
 extern void choixAdversaire();
 
 Button** arrayButton = NULL;
@@ -18,20 +20,20 @@ int arraySize() {
 }
 
 void freeButtons() {
-	free(arrayButton);
-	arrayButton = NULL;
+	if(arrayButton != NULL) {
+		free(arrayButton);
+		arrayButton = NULL;
+	}
 }
 
 int checkClick(int x, int y) {
 	int size = arraySize();
-	printf("PISS: %d",size);
 	for(int i = 0; i < size; i++) {
 		if(x > arrayButton[i]->x && x < (arrayButton[i]->x + arrayButton[i]->w) && y > arrayButton[i]->y && y < (arrayButton[i]->y + arrayButton[i]->h)){
-				printf("Click détecté dans le button n°%d\n", i);
 				arrayButton[i]->click();
+				return 0;
 		}
 	}
-	printf("ZEIIIIIIIIIIIIIIIII\n");
 }
 
 Button* init_button(int x, int y, int w, int h, void(*c)()) {
@@ -106,11 +108,11 @@ void draw_goban_size(int width, int height) {
 
 	int goban13_y = btn2_y + (btn1_h / 2) + 4;
 	int goban9_y = btn3_y + (btn1_h / 2) + 4;
-	void(*truc)() = &choixTaille;
+	
 	// Button registering...
-	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, truc);
-	Button* btn2 = init_button(btn1_x, btn2_y, btn1_w, btn1_h, truc);
-	Button* btn3 = init_button(btn1_x, btn3_y, btn1_w, btn1_h, truc);
+	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, setGoban19);
+	Button* btn2 = init_button(btn1_x, btn2_y, btn1_w, btn1_h, setGoban13);
+	Button* btn3 = init_button(btn1_x, btn3_y, btn1_w, btn1_h, setGoban9);
 
 	arrayButton = malloc(sizeof(Button) * 3);
 	arrayButton[0] = btn1;
@@ -128,8 +130,8 @@ void draw_goban_size(int width, int height) {
 void draw_choix_adversaire(int width, int height) {
 	resizeMenu(width, height);
 
-	char new_party[] = "IA";
-	char load_party[] = "Deux joueurs";
+	char ia[] = "IA";
+	char two_player[] = "Deux joueurs";
 
 	// Determines x, y & size of button
 	int btn1_w = (width / 5);
@@ -151,7 +153,7 @@ void draw_choix_adversaire(int width, int height) {
 	arrayButton[1] = btn2;
 
 	rectangle(btn1_x, btn1_y, btn1_w, btn1_h);
-	string(new_party_x, new_party_y, new_party);
+	string(new_party_x, new_party_y, ia);
 	rectangle(btn2_x, btn1_y, btn1_w, btn1_h);
-	string(load_party_x, new_party_y, load_party);
+	string(load_party_x, new_party_y, two_player);
 }

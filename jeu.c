@@ -132,6 +132,21 @@ void choixTaille() {
 	refresh_manager(w, h);
 }
 
+void setGoban19() {
+	nbCase =  19;
+	choixTaille();
+}
+
+void setGoban13() {
+	nbCase =  13;
+	choixTaille();
+}
+
+void setGoban9() {
+	nbCase =  9;
+	choixTaille();
+}
+
 void choixAdversaire() {
 	courFenetre = 3;
 	int w = width_win();
