@@ -8,6 +8,7 @@
 #endif
 
 int nbCase, espaceCase, tour, courFenetre;
+Goban *goban;
 
 void draw_pion( int x, int y){
 
@@ -15,6 +16,8 @@ void draw_pion( int x, int y){
 	if(x < espaceCase || y < espaceCase || x > nbCase * espaceCase || y > nbCase * espaceCase) {
 		return;
 	}
+
+	//checkPosePion();
 
 	// Tour du blanc
 	if(tour == -1){
@@ -204,7 +207,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 0;
+	courFenetre = 3;
 	tour = 1;
 
 	if(argc >= 2) {
@@ -212,7 +215,7 @@ int main(int argc, char **argv) {
 	}
 
 	if(nbCase == 0){
-		nbCase = 9;
+		nbCase = 19;
 	}
 
 	switch(nbCase)
@@ -233,7 +236,7 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	Goban *goban = malloc(sizeof *goban);
+	goban = malloc(sizeof *goban);
 	initPlateau(goban, width, height, nbCase);
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
 	event_loop();
