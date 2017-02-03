@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dessine.h"
+#include "goban.h"
 
 int nbCase, espaceCase, tour;
 
@@ -167,6 +168,10 @@ int main(int argc, char **argv) {
 		default:
 			break;
 	}
+
+	Goban *goban = malloc(sizeof *goban);
+	initPlateau(goban, width, height, nbCase);
+	
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
 	event_loop();
 	return EXIT_SUCCESS;
