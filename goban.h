@@ -8,7 +8,9 @@ struct Goban{
 	int nbCase;
 	int width;
 	int height;
-	Intersection **intersections;
+	Intersection ***intersections;
 };
 
 void initPlateau(Goban*, int, int, int);
+
+Intersection* placerPion(Goban*,int, int, int, int);

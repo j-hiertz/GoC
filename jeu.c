@@ -8,13 +8,9 @@
 #endif
 
 int nbCase, espaceCase, tour, courFenetre;
+Goban *goban;
 
 void draw_pion( int x, int y){
-
-	// On ne dessine pas hors du plateau
-	if(x < espaceCase || y < espaceCase || x > nbCase * espaceCase || y > nbCase * espaceCase) {
-		return;
-	}
 
 	// Tour du blanc
 	if(tour == -1){
@@ -96,6 +92,15 @@ void draw_plateau(int width, int height)
 
 }
 
+bool checkBoundsGoban(int x, int y){
+	// On ne dessine pas hors du plateau
+	if(x < espaceCase || y < espaceCase || x > nbCase * espaceCase || y > nbCase * espaceCase) {
+		return false;
+	}
+
+	return true;
+}
+
 // Manage changing window
 void refresh_manager(int width, int height)
 {
@@ -159,8 +164,14 @@ void choixAdversaire() {
 void mouse_clicked(int bouton, int x, int y) {
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
 	checkClick(x, y);
-	draw_pion(x,y);
-	tour *= -1;
+	bool inGoban = checkBoundsGoban(x, y);
+	
+	if(inGoban) {
+		Intersection* inter = placerPion(goban, tour, x, y, espaceCase);
+		printf("Pion créé de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+		draw_pion(inter->x,inter->y);
+		tour *= -1;
+	}
 }
 
 
@@ -204,7 +215,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 0;
+	courFenetre = 3;
 	tour = 1;
 
 	if(argc >= 2) {
@@ -233,7 +244,7 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	Goban *goban = malloc(sizeof *goban);
+	goban = malloc(sizeof *goban);
 	initPlateau(goban, width, height, nbCase);
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
 	event_loop();

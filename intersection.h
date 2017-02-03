@@ -7,7 +7,7 @@ typedef struct Intersection Intersection;
 struct Intersection{
 	int x;
 	int y;
-	// NULL PION BLANC / NOIR
+	Pion* pion;
 	Intersection* interHaut;
 	Intersection* interDroite;
 	Intersection* interBas;

@@ -3,13 +3,13 @@
 	#include "boolean.h"
 #endif
 
-typedef enum { NOIR, BlANC} color;
+typedef enum { NOIR, BLANC} colorPion;
 
 
-typedef struct Pion pion;
+typedef struct Pion Pion;
 struct Pion{
-	color couleur;
+	colorPion couleur;
 	bool visible;
 };
 
-Pion* initPion(color);
+Pion *initPion(colorPion, bool);
