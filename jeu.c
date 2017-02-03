@@ -12,6 +12,8 @@ Goban *goban;
 
 void draw_pion( int x, int y){
 
+	//checkPosePion();
+
 	// Tour du blanc
 	if(tour == -1){
 		color(1,1,1);
@@ -223,7 +225,7 @@ int main(int argc, char **argv) {
 	}
 
 	if(nbCase == 0){
-		nbCase = 9;
+		nbCase = 19;
 	}
 
 	switch(nbCase)

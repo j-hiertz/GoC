@@ -40,7 +40,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 		int posY = espaceCase + (espaceCase * ligne);
 
 		for(int colonne = 0; colonne < nbCase; colonne++) {
-			
+
 			int posX = espaceCase + (espaceCase * colonne);
 
 			intersections[ligne][colonne] = initIntersection(posX, posY);
@@ -57,7 +57,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 				intersections[ligne-1][colonne]->interBas = intersections[ligne][colonne];
 			}
 		}
-		
+
 	}
 
 	ptrGoban->intersections = intersections;
@@ -90,3 +90,36 @@ Intersection* placerPion(Goban* goban, int tour, int x, int y, int espaceCase){
 
 	return goban->intersections[ligne][colonne];
 }
+
+/*
+int checkPosePion(Goban* goban, Intersection* intersection) {
+	// TODO : Enregistrement du pion dans l'intersection correspondante
+	// couleur = intersection->pion->couleur;
+	if(checkLiberte(intersection)) {
+		return 1;
+	} else {
+		//if(intersection->interHaut->pion->couleur == couleur || intersection->interBas->pion->couleur == couleur || intersection->interGauche->pion->couleur == couleur || intersection->interDroite->pion->couleur == couleur)
+	}
+}
+
+int checkLiberte(Intersection* inter) {
+	if(intersection->interHaut == NULL || intersection->interBas == NULL || intersection->interDroite == NULL || intersection->interGauche != NULL) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+int checkLiberteRecusif(Intersection* inter) {
+	int verif = 0;
+	if(checkLiberte(inter)) {
+		verif = 1;
+	} else if (  On check si il y a une pion de même couleur à côté et true si c'est le cas  ) {
+		verif = checkLiberteRecusif(inter);
+	} else {
+		verif = 0;
+	}
+
+	return verif;
+}
+*/
