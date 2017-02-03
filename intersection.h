@@ -1,0 +1,12 @@
+typedef struct Intersection Intersection;
+struct Intersection{
+	int x;
+	int y;
+	// NULL PION BLANC / NOIR
+	Intersection* interHaut;
+	Intersection* interDroite;
+	Intersection* interBas;
+	Intersection* interGauche;
+};
+
+Intersection* initIntersection(int, int);

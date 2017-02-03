@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef DESSINE_H
-	#define DESSINE_H
-	#include "dessine.h"
-#endif
+#include "dessine.h"
 
 typedef struct Button{
 	int x, y, w, h;

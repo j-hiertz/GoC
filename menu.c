@@ -13,6 +13,7 @@ Button** arrayButton = NULL;
 
 int arraySize() {
 	int i = 0;
+	if(arrayButton == NULL) { return i; }
 	while(arrayButton[i] != NULL) {
 		i++;
 	}
@@ -28,6 +29,7 @@ void freeButtons() {
 
 int checkClick(int x, int y) {
 	int size = arraySize();
+	printf("TEST AFFICHAGE -----------\n");
 	for(int i = 0; i < size; i++) {
 		if(x > arrayButton[i]->x && x < (arrayButton[i]->x + arrayButton[i]->w) && y > arrayButton[i]->y && y < (arrayButton[i]->y + arrayButton[i]->h)){
 				arrayButton[i]->click();
@@ -108,7 +110,7 @@ void draw_goban_size(int width, int height) {
 
 	int goban13_y = btn2_y + (btn1_h / 2) + 4;
 	int goban9_y = btn3_y + (btn1_h / 2) + 4;
-	
+
 	// Button registering...
 	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, setGoban19);
 	Button* btn2 = init_button(btn1_x, btn2_y, btn1_w, btn1_h, setGoban13);

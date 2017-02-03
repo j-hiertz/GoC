@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef DESSINE_H
-	#define DESSINE_H
+#ifndef LIBRARY_H
+	#define LIBRARY_H
 	#include "dessine.h"
+	#include "goban.h"
+	#include "menu.h"
 #endif
-#include "menu.h"
 
 int nbCase, espaceCase, tour, courFenetre;
 
@@ -232,7 +233,9 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	init_win(600, 400, "Go Go MoMo Game Desu",0.988,0.807,0.611);
+	Goban *goban = malloc(sizeof *goban);
+	initPlateau(goban, width, height, nbCase);
+	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
 	event_loop();
 	return EXIT_SUCCESS;
 }
