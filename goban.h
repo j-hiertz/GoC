@@ -3,7 +3,8 @@
 	#include "intersection.h"
 #endif
 
-typedef struct Goban{
+typedef struct Goban Goban;
+struct Goban{
 	int nbCase;
 	int width;
 	int height;
