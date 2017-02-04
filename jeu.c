@@ -5,10 +5,12 @@
 	#include "dessine.h"
 	#include "goban.h"
 	#include "menu.h"
+	#include "file.h"
 #endif
 
 int nbCase, espaceCase, tour, courFenetre;
 Goban *goban;
+FILE *file;
 
 void draw_pion(int x, int y, colorPion colorPion){
 
@@ -200,7 +202,7 @@ void mouse_clicked(int bouton, int x, int y) {
 		Intersection *inter = goban->intersections[ligne][colonne];
 
 		// Routine de vérification de placement de pion
-		if(placerPion(goban, inter, tour, colonne, ligne)) {
+		if(placerPion(file, goban, inter, tour, colonne, ligne)) {
 
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion déssiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
@@ -247,8 +249,9 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 			break;
 	}
 
-	if (c>' ' && c<'z')
+	if (c>' ' && c<'z') {
 		printf("char: %c \n",c);
+	}
 
 	printf(" avec pos souris: %d,%d \n",x_souris,y_souris);
 
@@ -289,6 +292,9 @@ int main(int argc, char **argv) {
 	goban = malloc(sizeof *goban);
 	initPlateau(goban, width, height, nbCase);
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
+
+	file = createSGF(nbCase);
+
 	event_loop();
 	return EXIT_SUCCESS;
 }

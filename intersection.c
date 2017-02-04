@@ -20,3 +20,11 @@ void updatePosIntersection(Intersection* inter, int x, int y) {
 	inter->x = x;
 	inter->y = y;
 }
+
+void positionToChar(char* coupStr, int ligne, int colonne, char couleurPion) {
+	
+	char l = ligne + 97;
+	char c = colonne + 97;
+
+	sprintf(coupStr, "%c[%c%c];", couleurPion, l, c);
+}

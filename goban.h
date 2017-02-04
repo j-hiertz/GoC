@@ -1,6 +1,7 @@
 #ifndef INTERSECTION_H
 	#define INTERSECTION_H
 	#include "intersection.h"
+	#include "file.h"
 #endif
 
 typedef struct Goban Goban;
@@ -13,6 +14,6 @@ struct Goban{
 
 void initPlateau(Goban*, int, int, int);
 
-bool placerPion(Goban*, Intersection*, int, int, int);
+bool placerPion(FILE*, Goban*, Intersection*, int, int, int);
 
 bool checkPosePion(Goban*, Intersection*, int);

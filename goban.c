@@ -75,18 +75,24 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 }
 
-bool placerPion(Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){	
+bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){	
 
 	if(checkPosePion(goban, intersection, tour)){
+
+		char coupStr[6];
 	
 		if(tour == 1) { // Pion blanc
 			intersection->pion = initPion(BLANC, true);
+			positionToChar(coupStr, ligne, colonne, 'W');
 		}
 		else { // Pion noir
 			intersection->pion = initPion(NOIR, true);
+			positionToChar(coupStr, ligne, colonne, 'B');
 		}
 
 		printf("Place pion case : %d:%d\n",ligne,colonne);
+
+		updateSGF(file, coupStr);
 
 		return true;
 	}
