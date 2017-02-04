@@ -164,15 +164,29 @@ void choixAdversaire() {
 
 // Handle user click
 void mouse_clicked(int bouton, int x, int y) {
+
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
-	checkClick(x, y);
-	bool inGoban = checkBoundsGoban(x, y);
 	
-	if(inGoban) {
-		Intersection* inter = placerPion(goban, tour, x, y, espaceCase);
-		printf("Pion créé de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
-		draw_pion(inter->x,inter->y);
-		tour *= -1;
+	// Menu purpose
+	checkClick(x, y);
+
+	if(checkBoundsGoban(x, y)) {
+
+		// On défini la case la plus proche du click
+		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
+		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
+
+		Intersection *inter = goban->intersections[ligne][colonne];
+
+		// Routine de vérification de placement de pion
+		if(placerPion(goban, inter, tour, colonne, ligne)) {
+
+			printf("Intersection -> pion %p\n", inter->pion);
+			printf("Pion déssiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+			
+			draw_pion(inter->x,inter->y);
+			tour *= -1;
+		}
 	}
 }
 

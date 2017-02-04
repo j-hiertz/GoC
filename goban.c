@@ -75,33 +75,45 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 }
 
-Intersection* placerPion(Goban* goban, int tour, int x, int y, int espaceCase){
-	int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
-	int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
-	
-	if(tour == 1) { // Pion blanc
-		colorPion cp = BLANC;
-		goban->intersections[ligne][colonne]->pion = initPion(BLANC, true);
-	}
-	else { // Pion noir
-		goban->intersections[ligne][colonne]->pion = initPion(NOIR, true);
-	}
-	printf("Place pion case : %d:%d\n",ligne,colonne);
+bool placerPion(Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){	
 
-	return goban->intersections[ligne][colonne];
+	if(checkPosePion(goban, intersection, tour)){
+	
+		if(tour == 1) { // Pion blanc
+			intersection->pion = initPion(BLANC, true);
+		}
+		else { // Pion noir
+			intersection->pion = initPion(NOIR, true);
+		}
+
+		printf("Place pion case : %d:%d\n",ligne,colonne);
+
+		return true;
+	}
+
+	return false;
 }
 
-/*
-int checkPosePion(Goban* goban, Intersection* intersection) {
+
+bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
 	// TODO : Enregistrement du pion dans l'intersection correspondante
+
+	// Etape 1 : On vérifie que la case est libre
+	if(intersection->pion) {
+		printf("Un pion est déjà présent sur la case %p\n", intersection);
+		return false;
+	}
 	// couleur = intersection->pion->couleur;
-	if(checkLiberte(intersection)) {
+	/*if(checkLiberte(intersection)) {
 		return 1;
 	} else {
 		//if(intersection->interHaut->pion->couleur == couleur || intersection->interBas->pion->couleur == couleur || intersection->interGauche->pion->couleur == couleur || intersection->interDroite->pion->couleur == couleur)
-	}
+	}*/
+
+	return true;
 }
 
+/*
 int checkLiberte(Intersection* inter) {
 	if(intersection->interHaut == NULL || intersection->interBas == NULL || intersection->interDroite == NULL || intersection->interGauche != NULL) {
 		return 1;

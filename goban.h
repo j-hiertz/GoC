@@ -13,6 +13,6 @@ struct Goban{
 
 void initPlateau(Goban*, int, int, int);
 
-Intersection* placerPion(Goban*,int, int, int, int);
+bool placerPion(Goban*, Intersection*, int, int, int);
 
-int checkPosePion();
+bool checkPosePion(Goban*, Intersection*, int);
