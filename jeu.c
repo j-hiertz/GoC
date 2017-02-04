@@ -10,12 +10,12 @@
 int nbCase, espaceCase, tour, courFenetre;
 Goban *goban;
 
-void draw_pion( int x, int y){
+void draw_pion(int x, int y, colorPion colorPion){
 
 	//checkPosePion();
 
 	// Tour du blanc
-	if(tour == -1){
+	if(colorPion == BLANC){
 		color(1,1,1);
 	}
 	else { // Tour du noir
@@ -70,6 +70,7 @@ void draw_plateau(int width, int height)
 	clear_win();
 	color(0,0,0);
 
+	// On calcul le ratio pour garder un Goban carré
 	if(height < width) {
 		espaceCase = height / (nbCase + 1);
 	}
@@ -82,6 +83,7 @@ void draw_plateau(int width, int height)
 
 	int i;
 
+	// On redessine le plateau
 	for(i=0; i < nbCase ; i++){
 		line(espaceCase, espaceCase + (espaceCase * i), nbCase*espaceCase, espaceCase + (espaceCase * i));
 	}
@@ -90,7 +92,26 @@ void draw_plateau(int width, int height)
 		line(espaceCase + (espaceCase * i), espaceCase, espaceCase + (espaceCase * i), espaceCase * nbCase);
 	}
 
+	// On redessine les hoshi
 	draw_hoshi(width, height);
+
+	// On réaffecte les positions des intersections puis on redessine les pions
+	for(int ligne = 0; ligne < nbCase; ligne++) {
+
+		int posY = espaceCase + (espaceCase * ligne);
+
+		for(int colonne = 0; colonne < nbCase; colonne++) {
+
+			int posX = espaceCase + (espaceCase * colonne);
+			updatePosIntersection(goban->intersections[ligne][colonne], posX, posY);
+
+			Intersection* inter = goban->intersections[ligne][colonne];
+
+			if(inter->pion && inter->pion->visible) {
+					draw_pion(inter->x, inter->y, inter->pion->couleur);
+			}
+		}
+	}
 
 }
 
@@ -184,7 +205,12 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion déssiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 			
-			draw_pion(inter->x,inter->y);
+			if(tour == 1) {
+				draw_pion(inter->x,inter->y,NOIR);
+			}
+			else {
+				draw_pion(inter->x,inter->y,BLANC);
+			}
 			tour *= -1;
 		}
 	}

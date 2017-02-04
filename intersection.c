@@ -15,3 +15,8 @@ Intersection* initIntersection(int x, int y) {
 
 	return inter;
 }
+
+void updatePosIntersection(Intersection* inter, int x, int y) {
+	inter->x = x;
+	inter->y = y;
+}

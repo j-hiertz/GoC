@@ -15,3 +15,5 @@ struct Intersection{
 };
 
 Intersection* initIntersection(int, int);
+
+void updatePosIntersection(Intersection*, int, int);
