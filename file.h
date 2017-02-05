@@ -2,4 +2,7 @@
 #include <stdio.h>
 
 FILE *createSGF(int);
+
 void updateSGF(FILE*, char*);
+
+void endGameSGF(FILE*, char*);

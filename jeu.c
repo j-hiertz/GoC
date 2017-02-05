@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #ifndef LIBRARY_H
 	#define LIBRARY_H
 	#include "dessine.h"
@@ -150,10 +151,26 @@ void newParty() {
 }
 
 void loadParty() {
-	courFenetre = 3;
-	int w = width_win();
-	int h = height_win();
-	refresh_manager(w, h);
+
+	char fileName[255];
+
+	printf("\n========== Chargement de partie ==========\n");
+	printf("\nVeuillez indiquer le chemin absolu du fichier SGF : \n");
+
+	scanf("%s", fileName);
+
+	FILE *fp = fopen(fileName, "r");
+
+	if(fp == NULL) {
+		printf("ERROR : IMPOSSIBLE D'OUVRIR LE FICHIER : %s\n",fileName);
+		loadParty();
+	}
+	else {
+		courFenetre = 3;
+		int w = width_win();
+		int h = height_win();
+		refresh_manager(w, h);
+	}
 }
 
 void choixTaille() {
@@ -251,6 +268,10 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 
 	if (c>' ' && c<'z') {
 		printf("char: %c \n",c);
+
+		if(c == 'e'){
+			endGameSGF(file, "(;RE[B+R]");
+		}
 	}
 
 	printf(" avec pos souris: %d,%d \n",x_souris,y_souris);
@@ -260,7 +281,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 3;
+	courFenetre = 0;
 	tour = 1;
 
 	if(argc >= 2) {

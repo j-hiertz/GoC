@@ -16,8 +16,7 @@ FILE *createSGF(int nbCase){
 	FILE *fp = fopen(nameFile, "w");
 
 	if(fp == NULL) {
-		// TODO handle error and quit program
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	strftime(date, 20, "%Y-%m-%d", localtime(&t));
@@ -36,13 +35,17 @@ FILE *createSGF(int nbCase){
 	// KM[Nombre de point] Komi (Compensation en point pour le joueur blanc)
 	// B[dp]; Noir joue sur le case dp => 4:16 (0:13 dans le tableau)
 	// W[ic]; Blanc joue sur le case ic => 9:3 (8:2 dans le tableau)
-	fprintf(fp, "(;FF[4]GM[1]SZ[%d]US[Mohamed Azzouz & Jordan Hiertz]GN[Go Go MoMo Game Desu]\n", nbCase);
+	fprintf(fp, "(;RE[W+R]FF[4]GM[1]SZ[%d]US[Mohamed Azzouz & Jordan Hiertz]GN[Go Go MoMo Game Desu]\n", nbCase);
 	fprintf(fp, "PW[Joueur Blanc]PB[Joueur Noir]PC[CFAI Eckbolsheim]DT[%s]KM[0.5];)", date);
 
 	return fp;
 }
 
 void updateSGF(FILE* file, char* str){
+
+	if(file == NULL) {
+		exit(EXIT_FAILURE);
+	}
 
 	fseek(file, -1, SEEK_END);
 	fputs("\n", file);
@@ -54,4 +57,21 @@ void updateSGF(FILE* file, char* str){
 	// On supprime le dernier ";" et on ferme la paranthèse
 	fseek(file, 0, SEEK_END);
 	fputs(")", file);
+}
+
+void endGameSGF(FILE* file, char* str){
+
+	if(file == NULL) {
+		exit(EXIT_FAILURE);
+	}
+
+	// On se place avant la paranthèse de fin de fichier
+	fseek(file, 0, SEEK_SET);
+	fputs(str, file);
+
+	// On supprime le dernier ";" et on ferme la paranthèse
+	/*fseek(file, -1, SEEK_END);
+	fputs(")", file);	*/
+
+	fclose(file);
 }
