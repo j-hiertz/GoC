@@ -47,10 +47,11 @@ void updateSGF(FILE* file, char* str){
 		exit(EXIT_FAILURE);
 	}
 
+	// On se met a -1 pour supprimer la paranthèse
 	fseek(file, -1, SEEK_END);
 	fputs("\n", file);
 
-	// On se place avant la paranthèse de fin de fichier
+	// On ajoute le coup
 	fseek(file, 0, SEEK_END);
 	fputs(str, file);
 
@@ -65,13 +66,9 @@ void endGameSGF(FILE* file, char* str){
 		exit(EXIT_FAILURE);
 	}
 
-	// On se place avant la paranthèse de fin de fichier
+	// On se place au début du fichier et on supprime le résultat
 	fseek(file, 0, SEEK_SET);
 	fputs(str, file);
-
-	// On supprime le dernier ";" et on ferme la paranthèse
-	/*fseek(file, -1, SEEK_END);
-	fputs(")", file);	*/
 
 	fclose(file);
 }

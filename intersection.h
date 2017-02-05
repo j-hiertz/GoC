@@ -19,3 +19,5 @@ Intersection* initIntersection(int, int);
 void updatePosIntersection(Intersection*, int, int);
 
 void positionToChar(char*, int, int, char);
+
+int charToPosition(char);

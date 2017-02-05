@@ -28,3 +28,7 @@ void positionToChar(char* coupStr, int colonne, int ligne, char couleurPion) {
 
 	sprintf(coupStr, "%c[%c%c];", couleurPion, c, l);
 }
+
+int charToPosition(char c) {
+	return c - 97;
+}

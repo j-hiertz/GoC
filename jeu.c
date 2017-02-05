@@ -139,6 +139,11 @@ void refresh_manager(int width, int height)
 	} else if (courFenetre == 2) {
 		draw_choix_adversaire(width, height);
 	} else if (courFenetre == 3) {
+
+		//if(file) { // FAIT PLANTER LE JEU ?
+			file = createSGF(nbCase); //TODO check if file exist (charger)
+		//}
+
 		draw_plateau(width, height);
 	}
 }
@@ -166,6 +171,8 @@ void loadParty() {
 		loadParty();
 	}
 	else {
+		printf("Chargement de la partie\n");
+		createGameFromFile(fp, goban);
 		courFenetre = 3;
 		int w = width_win();
 		int h = height_win();
@@ -310,11 +317,10 @@ int main(int argc, char **argv) {
 			break;
 	}
 
-	goban = malloc(sizeof *goban);
-	initPlateau(goban, width, height, nbCase);
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
 
-	file = createSGF(nbCase);
+	goban = malloc(sizeof *goban);
+	initPlateau(goban, width, height, nbCase);
 
 	event_loop();
 	return EXIT_SUCCESS;

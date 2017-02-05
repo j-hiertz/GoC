@@ -17,3 +17,5 @@ void initPlateau(Goban*, int, int, int);
 bool placerPion(FILE*, Goban*, Intersection*, int, int, int);
 
 bool checkPosePion(Goban*, Intersection*, int);
+
+void createGameFromFile(FILE*, Goban*);
