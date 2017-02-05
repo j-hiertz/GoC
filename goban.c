@@ -81,13 +81,13 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, 
 
 		char coupStr[6];
 	
-		if(tour == 1) { // Pion blanc
-			intersection->pion = initPion(BLANC, true);
-			positionToChar(coupStr, ligne, colonne, 'W');
-		}
-		else { // Pion noir
+		if(tour == 1) { // Pion noir
 			intersection->pion = initPion(NOIR, true);
-			positionToChar(coupStr, ligne, colonne, 'B');
+			positionToChar(coupStr, colonne, ligne, 'B');
+		}
+		else { // Pion blanc
+			intersection->pion = initPion(BLANC, true);
+			positionToChar(coupStr, colonne, ligne, 'W');
 		}
 
 		printf("Place pion case : %d:%d\n",ligne,colonne);
