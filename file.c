@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 FILE *createSGF(int nbCase){
 	time_t t = time(NULL);
@@ -11,6 +13,7 @@ FILE *createSGF(int nbCase){
 	printf("now %s\n", date);
 
 	char nameFile[25];
+	mkdir("./save", 0755);
 	sprintf(nameFile, "save/game_%s.sgf", date);
 
 	FILE *fp = fopen(nameFile, "w");
