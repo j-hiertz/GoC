@@ -72,3 +72,34 @@ void endGameSGF(FILE* file, char* str){
 
 	fclose(file);
 }
+
+int getNbCaseFromFile(FILE* file) {
+
+	char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    int nCase = 19;
+
+    read = getline(&line, &len, file);
+
+    for(int i = 0; i < len - 1; i++){
+
+    	if(line[i] == 'S' && line[i+1] == 'Z') {
+
+    		if(line[i+3] == '9') {
+    			nCase = 9;
+    		}
+    		else if(line[i+3] == '1'){
+
+    			if(line[i+4] == '3') {
+    				nCase = 13;
+    			}
+    		}
+
+    		break;
+    	}
+    }
+
+	return nCase;
+}

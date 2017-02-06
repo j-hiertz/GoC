@@ -142,7 +142,7 @@ int checkLiberteRecusif(Intersection* inter) {
 }
 */
 
-// /home/jordan/GoC/save/game_2017_02_05_16_25_33.sgf
+// /home/jordan/GoC/save/game_2017_02_06_22_49_20.sgf
 void createGameFromFile(FILE* file, Goban *goban) {
 	printf("%d : %d\n", charToPosition('g'), charToPosition('e'));
 	
