@@ -12,3 +12,5 @@ typedef struct Chaine{
 } Chaine;
 
 void addPionChaine(Intersection* inter);
+int calculLiberte(Intersection **chaine, int longueurChaine);
+bool checkAlreadyUse(Intersection** intersections, int taille, Intersection* inter);
