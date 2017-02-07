@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "goban.h"
+#include "chaine.h"
 #ifndef BOOL_H
 	#define BOOL_H
 	#include "boolean.h"
@@ -70,17 +71,16 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 		}
 
 		printf("\n");
-		
+
 	}
 
 }
 
-bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){	
+bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){
 
 	if(checkPosePion(goban, intersection, tour)){
-
 		char coupStr[6];
-	
+
 		if(tour == 1) { // Pion noir
 			intersection->pion = initPion(NOIR, true);
 			positionToChar(coupStr, colonne, ligne, 'B');
@@ -91,6 +91,7 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, 
 		}
 
 		printf("Place pion case : %d:%d\n",ligne,colonne);
+		addPionChaine(intersection);
 
 		updateSGF(file, coupStr);
 
@@ -100,6 +101,14 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, 
 	return false;
 }
 
+int checkLiberte(Intersection* inter) {
+	if(inter->interHaut->pion == NULL) { return true; }
+	if(inter->interBas->pion == NULL) { return true; }
+	if(inter->interGauche->pion == NULL) { return true; }
+	if(inter->interDroite->pion == NULL) { return true; }
+
+	return false;
+}
 
 bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
 	// TODO : Enregistrement du pion dans l'intersection correspondante
@@ -109,30 +118,25 @@ bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
 		printf("Un pion est déjà présent sur la case %p\n", intersection);
 		return false;
 	}
-	// couleur = intersection->pion->couleur;
-	/*if(checkLiberte(intersection)) {
-		return 1;
-	} else {
-		//if(intersection->interHaut->pion->couleur == couleur || intersection->interBas->pion->couleur == couleur || intersection->interGauche->pion->couleur == couleur || intersection->interDroite->pion->couleur == couleur)
-	}*/
+
+	// Etape 2 : On récupère la couleur jouée
+	colorPion color;
+	if(tour == 1) { color = NOIR; }
+	else { color = BLANC; }
+
+	// Etape 3 : On regarde si le pion a AU MOINS UNE liberté, sinon on regarde si il prend un autre pion/chaine
+	if(!checkLiberte(intersection)) { printf("PAS DE LIBERTE\n"); return false; }
 
 	return true;
 }
 
-/*
-int checkLiberte(Intersection* inter) {
-	if(intersection->interHaut == NULL || intersection->interBas == NULL || intersection->interDroite == NULL || intersection->interGauche != NULL) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
 
-int checkLiberteRecusif(Intersection* inter) {
-	int verif = 0;
+
+bool checkLiberteRecusif(Intersection* inter) {
+	int verif = false;
 	if(checkLiberte(inter)) {
-		verif = 1;
-	} else if (  On check si il y a une pion de même couleur à côté et true si c'est le cas  ) {
+		verif = true;
+	} else if (  1 ) {
 		verif = checkLiberteRecusif(inter);
 	} else {
 		verif = 0;
@@ -140,12 +144,11 @@ int checkLiberteRecusif(Intersection* inter) {
 
 	return verif;
 }
-*/
 
 // /home/jordan/GoC/save/game_2017_02_05_16_25_33.sgf
 void createGameFromFile(FILE* file, Goban *goban) {
 	printf("%d : %d\n", charToPosition('g'), charToPosition('e'));
-	
+
 	char * line = NULL;
     size_t len = 0;
     ssize_t read;

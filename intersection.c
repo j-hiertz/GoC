@@ -1,9 +1,12 @@
 #include "dessine.h"
 #include <string.h>
-#include "intersection.h"
+#ifndef INTERSECTION_H
+	#define INTERSECTION_H
+	#include "intersection.h"
+#endif
 
 Intersection* initIntersection(int x, int y) {
-	
+
 	Intersection *inter = malloc(sizeof(*inter));
 	inter->x = x;
 	inter->y = y;
@@ -22,7 +25,7 @@ void updatePosIntersection(Intersection* inter, int x, int y) {
 }
 
 void positionToChar(char* coupStr, int colonne, int ligne, char couleurPion) {
-	
+
 	char l = ligne + 97;
 	char c = colonne + 97;
 

@@ -1,8 +1,8 @@
 #ifndef INTERSECTION_H
 	#define INTERSECTION_H
 	#include "intersection.h"
-	#include "file.h"
 #endif
+#include "file.h"
 
 typedef struct Goban Goban;
 struct Goban{

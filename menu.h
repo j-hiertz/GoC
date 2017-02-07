@@ -8,7 +8,6 @@ typedef struct Button{
 } Button;
 
 void freeButtons();
-int arraySize();
 int checkClick(int x, int y);
 Button* init_button(int x, int y, int w, int h, void(*c)());
 void draw_menu_load(int width, int height);

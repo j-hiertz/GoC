@@ -10,31 +10,24 @@ extern void setGoban9();
 extern void choixAdversaire();
 
 Button** arrayButton = NULL;
-
-int arraySize() {
-	int i = 0;
-	if(arrayButton == NULL) { return i; }
-	while(arrayButton[i] != NULL) {
-		i++;
-	}
-	return i;
-}
+int sizeArray = 0;
 
 void freeButtons() {
 	if(arrayButton != NULL) {
 		free(arrayButton);
 		arrayButton = NULL;
+		sizeArray = 0;
 	}
 }
 
 int checkClick(int x, int y) {
-	int size = arraySize();
-	for(int i = 0; i < size; i++) {
+	for(int i = 0; i < sizeArray; i++) {
 		if(x > arrayButton[i]->x && x < (arrayButton[i]->x + arrayButton[i]->w) && y > arrayButton[i]->y && y < (arrayButton[i]->y + arrayButton[i]->h)){
 				arrayButton[i]->click();
-				return 0;
+				return 1;
 		}
 	}
+	return 0;
 }
 
 Button* init_button(int x, int y, int w, int h, void(*c)()) {
@@ -79,6 +72,7 @@ void draw_menu_load(int width, int height) {
 	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, &newParty);
 	Button* btn2 = init_button(btn2_x, btn1_y, btn1_w, btn1_h, &loadParty);
 	arrayButton = malloc(sizeof(Button) * 2);
+	sizeArray = 2;
 	arrayButton[0] = btn1;
 	arrayButton[1] = btn2;
 
@@ -116,6 +110,7 @@ void draw_goban_size(int width, int height) {
 	Button* btn3 = init_button(btn1_x, btn3_y, btn1_w, btn1_h, setGoban9);
 
 	arrayButton = malloc(sizeof(Button) * 3);
+	sizeArray = 3;
 	arrayButton[0] = btn1;
 	arrayButton[1] = btn2;
 	arrayButton[2] = btn3;
@@ -150,6 +145,7 @@ void draw_choix_adversaire(int width, int height) {
 	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, &choixAdversaire);
 	Button* btn2 = init_button(btn2_x, btn1_y, btn1_w, btn1_h, &choixAdversaire);
 	arrayButton = malloc(sizeof(Button) * 2);
+	sizeArray = 2;
 	arrayButton[0] = btn1;
 	arrayButton[1] = btn2;
 
