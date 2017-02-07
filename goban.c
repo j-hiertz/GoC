@@ -145,7 +145,7 @@ bool checkLiberteRecusif(Intersection* inter) {
 	return verif;
 }
 
-// /home/jordan/GoC/save/game_2017_02_05_16_25_33.sgf
+// /home/jordan/GoC/save/game_2017_02_06_22_49_20.sgf
 void createGameFromFile(FILE* file, Goban *goban) {
 	printf("%d : %d\n", charToPosition('g'), charToPosition('e'));
 
@@ -178,4 +178,71 @@ void createGameFromFile(FILE* file, Goban *goban) {
 
         i++;
     }
+}
+
+// THESE FUNCTIONS NEED TO BE RELOCATED AT CHAINE.C ? SAME FOR LINE IN .H FILE
+int calculLiberte(Intersection **chaine, int longueurChaine) {
+
+	int liberte = 0;
+	int lengthUse = 0;
+
+	Intersection** alreadyUse = malloc(1*sizeof(*alreadyUse));
+
+	for(int i = 0; i < longueurChaine; i++) {
+
+		bool detectLib = false;
+
+		if(chaine[i]->interHaut != NULL && chaine[i]->interHaut->pion == NULL &&
+			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interHaut)) {
+
+			detectLib = true;
+		}
+
+		if(chaine[i]->interBas != NULL && chaine[i]->interBas->pion == NULL &&
+			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interBas)) {
+
+			detectLib = true;
+		}
+
+		if(chaine[i]->interDroite != NULL && chaine[i]->interDroite->pion == NULL &&
+			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interDroite)) {
+
+			detectLib = true;
+		}
+
+		if(chaine[i]->interGauche != NULL && chaine[i]->interGauche->pion == NULL &&
+			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interGauche)) {
+
+			detectLib = true;
+		}
+
+		if(detectLib) {
+			liberte++;
+			lengthUse++;
+			alreadyUse = realloc(alreadyUse, lengthUse*sizeof(*alreadyUse));
+		}
+
+	}
+
+	free(alreadyUse);
+
+	return liberte;
+
+}
+
+bool checkAlreadyUse(Intersection **intersections, int taille, Intersection* inter) {
+
+	if(taille == 0) {
+		return false;
+	}
+
+	for(int i = 0; i < taille; i++) {
+
+		// Comparaison des adresses mémoires
+		if(intersections[i] == inter) {
+			return true;
+		}
+	}
+
+	return false;
 }
