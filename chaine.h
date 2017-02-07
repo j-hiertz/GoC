@@ -7,6 +7,8 @@
 
 typedef struct Chaine{
 	Intersection** tabIntersection;
+	int liberte;
+	int size;
 } Chaine;
 
 void addPionChaine(Intersection* inter);

@@ -7,6 +7,7 @@
 #endif
 
 Chaine** chaines = NULL;
+int sizeChaines = 0;
 
 int getSize() {
 	int i = 0;
@@ -29,13 +30,13 @@ int getSizeChaine(int index) {
 void createChaine(Intersection* inter) {
 	int i = getSize();
 	chaines[i]->tabIntersection[0] = inter;
+	chaines[i]->size = 1;
+	sizeChaines++;
 }
 
 int getIndexChaine(Intersection* inter) {
-	int size = getSize();
-	for(int i = 0; i < size; i++) {
-		int sizeChaine = getSizeChaine(i);
-		for(int y = 0; y < sizeChaine; y++) {
+	for(int i = 0; i < sizeChaines; i++) {
+		for(int y = 0; y < chaines[i]->size; y++) {
 			if(inter = chaines[i]->tabIntersection[y]) {
 				return i;
 			}
@@ -55,8 +56,6 @@ void addToChaine(Intersection* interAdded, Intersection* interToAddTo) {
 }
 
 void addPionChaine(Intersection* inter) {
-	printf("Bonjour %d!\n", inter->pion->couleur);
-	//if (inter->interHaut->pion) {}
 	if(inter->interHaut->pion) {
 		if(inter->interHaut->pion->couleur == inter->pion->couleur) {
 			printf("Chaine detectee en haut, on l'y ajoute");
