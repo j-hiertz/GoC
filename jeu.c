@@ -218,13 +218,13 @@ void mouse_clicked(int bouton, int x, int y) {
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
 
 	// Menu purpose
-	int verif = 0;
-	if(courFenetre != 3) {
+	bool verif = false;
+	if(courFenetre < 3) {
 		checkClick(x, y);
-		verif = 1;
+		verif = true;
 	}
 
-	if(checkBoundsGoban(x, y) && verif == 0) {
+	if(checkBoundsGoban(x, y) && !verif) {
 		// On défini la case la plus proche du click
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
 		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
