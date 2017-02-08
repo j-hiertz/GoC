@@ -28,7 +28,6 @@ void draw_pion(int x, int y, colorPion colorPion){
 
 	// Taille du pion
 	filled_circle(x,y,(espaceCase /2)*0.85);
-
 }
 
 void draw_hoshi(int width, int height){
@@ -116,7 +115,24 @@ void draw_plateau(int width, int height)
 			}
 		}
 	}
+}
 
+void draw_menu_game(int width, int height) {
+	// TODO: bouton passer tour / bouton sauvegarder / bouton enlever pierres mortes / tour de jeu
+
+}
+
+void draw_tour_jeu(colorPion pion) {
+	color(0, 0, 0);
+	char tour[] = "Tour des";
+	int width = width_win();
+	int height = height_win();
+
+	if(pion == NOIR) { pion = BLANC; }
+	else { pion = NOIR; }
+
+	string(espaceCase * nbCase + 25, espaceCase + (espaceCase / 2), tour);
+	draw_pion(espaceCase * nbCase + 50, espaceCase * 2 + (espaceCase / 4), pion);
 }
 
 bool checkBoundsGoban(int x, int y){
@@ -263,12 +279,12 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 
-			if(tour == 1) {
-				draw_pion(inter->x,inter->y,NOIR);
-			}
-			else {
-				draw_pion(inter->x,inter->y,BLANC);
-			}
+			colorPion color;
+			if(tour == 1) { color = NOIR; }
+			else { color = BLANC; }
+
+			draw_pion(inter->x,inter->y,color);
+			draw_tour_jeu(color);
 			tour *= -1;
 		}
 	}
@@ -320,7 +336,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 0;
+	courFenetre = 3;
 	tour = 1;
 	joueur1 = JOUEUR;
 	joueur2 = IA;
@@ -336,7 +352,7 @@ int main(int argc, char **argv) {
 	switch(nbCase)
 	{
 		case 9:
-			width = 500;
+			width = 600;
 			height = 500;
 			break;
 		case 13:
