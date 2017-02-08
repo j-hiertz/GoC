@@ -10,6 +10,7 @@
 #endif
 
 int nbCase, espaceCase, tour, courFenetre;
+typePlayer joueur1, joueur2;
 Goban *goban;
 FILE *file;
 
@@ -137,10 +138,10 @@ void refresh_manager(int width, int height)
 	} else if (courFenetre == 1) {
 		draw_goban_size(width, height);
 	} else if (courFenetre == 2) {
-		draw_choix_adversaire(width, height);
+		draw_choix_adversaire(width, height, joueur1, joueur2);
 	} else if (courFenetre == 3) {
 		initPlateau(goban, width, height, nbCase);
-		file = createSGF(nbCase); 
+		file = createSGF(nbCase);
 		draw_plateau(width, height);
 
 	} else if (courFenetre == 4) {
@@ -206,10 +207,35 @@ void setGoban9() {
 }
 
 void choixAdversaire() {
+	courFenetre = 2;
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
+}
+
+void validationAdversaire() {
 	courFenetre = 3;
 	int w = width_win();
 	int h = height_win();
 	refresh_manager(w, h);
+}
+
+void choixJoueur1() {
+	if(joueur1 == 0) {
+		joueur1 = JOUEUR;
+	} else {
+		joueur1 = IA;
+	}
+	choixAdversaire();
+}
+
+void choixJoueur2() {
+	if(joueur2 == 0) {
+		joueur2 = JOUEUR;
+	} else {
+		joueur2 = IA;
+	}
+	choixAdversaire();
 }
 
 // Handle user click
@@ -294,8 +320,10 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 0;
+	courFenetre = 2;
 	tour = 1;
+	joueur1 = JOUEUR;
+	joueur2 = IA;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
@@ -324,7 +352,7 @@ int main(int argc, char **argv) {
 	}
 
 	init_win(width, height, "Go Go MoMo Game Desu",0.988,0.807,0.611);
-	
+
 	goban = malloc(sizeof *goban);
 
 	event_loop();
