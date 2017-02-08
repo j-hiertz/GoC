@@ -320,7 +320,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 2;
+	courFenetre = 0;
 	tour = 1;
 	joueur1 = JOUEUR;
 	joueur2 = IA;
