@@ -14,7 +14,9 @@ typePlayer joueur1, joueur2;
 colorPion tour;
 Goban *goban;
 FILE *file;
-Button* pass, save, delete;
+Button* pass;
+Button* save;
+Button* delete;
 bool passer;
 
 void setTour(colorPion p) {
@@ -68,53 +70,6 @@ void draw_hoshi(int width, int height){
 	}
 }
 
-void click_pass() {
-	if(passer) { printf("PARTIE ARRETEE\n"); }
-	else { passer = true; }
-}
-
-void click_menu_game(int x, int y) {
-	if(x > pass->x && x < pass->x + pass->w && y > pass->y && y < pass->y + pass->h) {
-		printf("OMG UN CLICK SUR PASSER\n");
-		pass->click();
-	}
-}
-
-void draw_menu_game_pass() {
-	color(1, 1, 1);
-	int pass_x = espaceCase * (nbCase) + espaceCase * 0.80;
-	int pass_y = espaceCase * (nbCase / 2);
-	int pass_w = espaceCase * 3;
-	int pass_h = pass_w / 2;
-	char passer[] = "Passer";
-
-	filled_rectangle(pass_x, pass_y, pass_w, pass_h);
-
-	pass = init_button(pass_x, pass_y, pass_w, pass_h, &click_pass);
-
-	color(0, 0, 0);
-	rectangle(pass_x, pass_y, pass_w, pass_h);
-	setLabelButton(passer, pass_x, pass_y, pass_w, pass_h, 30);
-}
-
-void draw_menu_game_delete() {
-	int del_x = espaceCase * (nbCase + 1);
-	int del_y = espaceCase * (nbCase / 2);
-	int del_w = espaceCase * 3;
-	int del_h = del_w / 2;
-
-	rectangle(del_x, del_y, del_w, del_h);
-}
-
-void draw_menu_game_save() {
-	int save_x = espaceCase * (nbCase + 1);
-	int save_y = espaceCase * (nbCase / 2);
-	int save_w = espaceCase * 3;
-	int save_h = save_w / 2;
-
-	rectangle(save_x, save_y, save_w, save_h);
-}
-
 void draw_tour_jeu() {
 	color(0, 0, 0);
 	char tourLbl[] = "Prochaine pierre";
@@ -125,9 +80,83 @@ void draw_tour_jeu() {
 	draw_pion(espaceCase * nbCase + 110, espaceCase * 2 + (espaceCase / 4), tour);
 }
 
+void click_pass() {
+	if(passer) { printf("PARTIE ARRETEE\n"); }
+	else {
+		passer = true;
+		if(tour = BLANC) { tour = NOIR; }
+		else { tour = BLANC; }
+		draw_tour_jeu();
+	}
+}
+
+void click_menu_game(int x, int y) {
+
+	if(x > pass->x && x < pass->x + pass->w && y > pass->y && y < pass->y + pass->h) {
+		pass->click();
+	} else if (x > save->x && x < save->x + save->w && y > save->y && y < save->y + save->h) {
+		save->click();
+	} else if (x > delete->x && x < delete->x + delete->w && y > delete->y && y < delete->y + delete->h) {
+		delete->click();
+	}
+}
+
+void draw_menu_game_pass() {
+	color(1, 1, 1);
+	int pass_w = espaceCase * 3;
+	int pass_h = pass_w / 2;
+	int pass_x = espaceCase * (nbCase) + espaceCase * 0.80;
+	int pass_y = espaceCase * (nbCase / 2) + 40;
+	char passerLbl[] = "Passer";
+
+	filled_rectangle(pass_x, pass_y, pass_w, pass_h);
+
+	pass = init_button(pass_x, pass_y, pass_w, pass_h, &click_pass);
+
+	color(0, 0, 0);
+	rectangle(pass_x, pass_y, pass_w, pass_h);
+	setLabelButton(passerLbl, pass_x, pass_y, pass_w, pass_h, 30);
+}
+
+void draw_menu_game_delete() {
+	color(1, 1, 1);
+	int del_w = espaceCase * 3;
+	int del_h = del_w / 3;
+	int del_x = espaceCase * (nbCase) + espaceCase * 0.80;
+	int del_y = espaceCase * (nbCase / 2) + espaceCase * 1.5 + 60;
+	char deleteLbl[] = "Delete Mode: Off";
+
+	filled_rectangle(del_x, del_y, del_w, del_h);
+
+	delete = init_button(del_x, del_y, del_w, del_h, &click_pass);
+
+	color(0, 0, 0);
+	rectangle(del_x, del_y, del_w, del_h);
+	setLabelButton(deleteLbl, del_x, del_y, del_w, del_h, 85);
+}
+
+void draw_menu_game_save() {
+	color(1, 1, 1);
+	int save_w = espaceCase * 3;
+	int save_h = save_w / 3;
+	int save_x = espaceCase * (nbCase) + espaceCase * 0.80;
+	int save_y = espaceCase * (nbCase / 2) - save_h + 20;
+	char saveLbl[] = "Sauvegarder";
+
+	filled_rectangle(save_x, save_y, save_w, save_h);
+
+	save = init_button(save_x, save_y, save_w, save_h, &click_pass);
+
+	color(0, 0, 0);
+	rectangle(save_x, save_y, save_w, save_h);
+	setLabelButton(saveLbl, save_x, save_y, save_w, save_h, 50);
+}
+
 void draw_init_menu_game(int width, int height) {
 	// TODO: bouton passer tour / bouton sauvegarder / bouton enlever pierres mortes / tour de jeu
 	draw_menu_game_pass();
+	draw_menu_game_save();
+	draw_menu_game_delete();
 	draw_tour_jeu();
 }
 
@@ -327,7 +356,7 @@ void mouse_clicked(int bouton, int x, int y) {
 
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
-
+			passer = false;
 			draw_pion(inter->x,inter->y,tour);
 			if(tour == BLANC) { tour = NOIR; }
 			else { tour = BLANC; }
