@@ -9,22 +9,22 @@
 	#include "file.h"
 #endif
 
-int nbCase, espaceCase, tour, courFenetre;
+int nbCase, espaceCase, courFenetre;
 typePlayer joueur1, joueur2;
+colorPion tour;
 Goban *goban;
 FILE *file;
+Button* pass, save, delete;
+bool passer;
+
+void setTour(colorPion p) {
+	tour = p;
+}
 
 void draw_pion(int x, int y, colorPion colorPion){
 
-	//checkPosePion();
-
-	// Tour du blanc
-	if(colorPion == BLANC){
-		color(1,1,1);
-	}
-	else { // Tour du noir
-		color(0,0,0);
-	}
+	if(colorPion == BLANC){ color(1,1,1); }
+	else { color(0,0,0); }
 
 	// Taille du pion
 	filled_circle(x,y,(espaceCase /2)*0.85);
@@ -66,6 +66,69 @@ void draw_hoshi(int width, int height){
 			}
 			break;
 	}
+}
+
+void click_pass() {
+	if(passer) { printf("PARTIE ARRETEE\n"); }
+	else { passer = true; }
+}
+
+void click_menu_game(int x, int y) {
+	if(x > pass->x && x < pass->x + pass->w && y > pass->y && y < pass->y + pass->h) {
+		printf("OMG UN CLICK SUR PASSER\n");
+		pass->click();
+	}
+}
+
+void draw_menu_game_pass() {
+	color(1, 1, 1);
+	int pass_x = espaceCase * (nbCase) + espaceCase * 0.80;
+	int pass_y = espaceCase * (nbCase / 2);
+	int pass_w = espaceCase * 3;
+	int pass_h = pass_w / 2;
+	char passer[] = "Passer";
+
+	filled_rectangle(pass_x, pass_y, pass_w, pass_h);
+
+	pass = init_button(pass_x, pass_y, pass_w, pass_h, &click_pass);
+
+	color(0, 0, 0);
+	rectangle(pass_x, pass_y, pass_w, pass_h);
+	setLabelButton(passer, pass_x, pass_y, pass_w, pass_h, 30);
+}
+
+void draw_menu_game_delete() {
+	int del_x = espaceCase * (nbCase + 1);
+	int del_y = espaceCase * (nbCase / 2);
+	int del_w = espaceCase * 3;
+	int del_h = del_w / 2;
+
+	rectangle(del_x, del_y, del_w, del_h);
+}
+
+void draw_menu_game_save() {
+	int save_x = espaceCase * (nbCase + 1);
+	int save_y = espaceCase * (nbCase / 2);
+	int save_w = espaceCase * 3;
+	int save_h = save_w / 2;
+
+	rectangle(save_x, save_y, save_w, save_h);
+}
+
+void draw_tour_jeu() {
+	color(0, 0, 0);
+	char tourLbl[] = "Prochaine pierre";
+	int width = width_win();
+	int height = height_win();
+
+	string(espaceCase * nbCase + 65, espaceCase + (espaceCase / 2), tourLbl);
+	draw_pion(espaceCase * nbCase + 110, espaceCase * 2 + (espaceCase / 4), tour);
+}
+
+void draw_init_menu_game(int width, int height) {
+	// TODO: bouton passer tour / bouton sauvegarder / bouton enlever pierres mortes / tour de jeu
+	draw_menu_game_pass();
+	draw_tour_jeu();
 }
 
 void draw_plateau(int width, int height)
@@ -115,24 +178,7 @@ void draw_plateau(int width, int height)
 			}
 		}
 	}
-}
-
-void draw_menu_game(int width, int height) {
-	// TODO: bouton passer tour / bouton sauvegarder / bouton enlever pierres mortes / tour de jeu
-
-}
-
-void draw_tour_jeu(colorPion pion) {
-	color(0, 0, 0);
-	char tour[] = "Tour des";
-	int width = width_win();
-	int height = height_win();
-
-	if(pion == NOIR) { pion = BLANC; }
-	else { pion = NOIR; }
-
-	string(espaceCase * nbCase + 25, espaceCase + (espaceCase / 2), tour);
-	draw_pion(espaceCase * nbCase + 50, espaceCase * 2 + (espaceCase / 4), pion);
+	draw_init_menu_game(width, height);
 }
 
 bool checkBoundsGoban(int x, int y){
@@ -159,7 +205,6 @@ void refresh_manager(int width, int height)
 		initPlateau(goban, width, height, nbCase);
 		file = createSGF(nbCase);
 		draw_plateau(width, height);
-
 	} else if (courFenetre == 4) {
 		draw_plateau(width, height);
 	}
@@ -266,6 +311,10 @@ void mouse_clicked(int bouton, int x, int y) {
 		verif = true;
 	}
 
+	if(courFenetre > 2) {
+		click_menu_game(x, y);
+	}
+
 	if(checkBoundsGoban(x, y) && !verif) {
 		// On défini la case la plus proche du click
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
@@ -279,13 +328,10 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 
-			colorPion color;
-			if(tour == 1) { color = NOIR; }
-			else { color = BLANC; }
-
-			draw_pion(inter->x,inter->y,color);
-			draw_tour_jeu(color);
-			tour *= -1;
+			draw_pion(inter->x,inter->y,tour);
+			if(tour == BLANC) { tour = NOIR; }
+			else { tour = BLANC; }
+			draw_tour_jeu();
 		}
 	}
 }
@@ -337,9 +383,10 @@ int main(int argc, char **argv) {
 
 	int width, height;
 	courFenetre = 3;
-	tour = 1;
+	tour = NOIR;
 	joueur1 = JOUEUR;
 	joueur2 = IA;
+	passer = false;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
@@ -352,7 +399,7 @@ int main(int argc, char **argv) {
 	switch(nbCase)
 	{
 		case 9:
-			width = 600;
+			width = 700;
 			height = 500;
 			break;
 		case 13:

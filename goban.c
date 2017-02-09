@@ -7,6 +7,8 @@
 	#include "dessine.h"
 #endif
 
+extern void setTour(colorPion p);
+
 void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 	ptrGoban->nbCase = nbCase;
@@ -75,16 +77,16 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 }
 
-bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){
+bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion tour, int colonne, int ligne){
 
-	if(checkPosePion(goban, intersection, tour)){
+	if(checkPosePion(goban, intersection)){
 		char coupStr[6];
 
-		if(tour == 1) { // Pion noir
+		if(tour == NOIR) {
 			intersection->pion = initPion(NOIR, true);
 			positionToChar(coupStr, colonne, ligne, 'B');
 		}
-		else { // Pion blanc
+		else {
 			intersection->pion = initPion(BLANC, true);
 			positionToChar(coupStr, colonne, ligne, 'W');
 		}
@@ -108,7 +110,7 @@ int checkLiberte(Intersection* inter) {
 	return false;
 }
 
-bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
+bool checkPosePion(Goban* goban, Intersection* intersection) {
 	// TODO : Enregistrement du pion dans l'intersection correspondante
 
 	// Etape 1 : On vérifie que la case est libre
@@ -116,11 +118,6 @@ bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
 		printf("Un pion est déjà présent sur la case %p\n", intersection);
 		return false;
 	}
-
-	// Etape 2 : On récupère la couleur jouée
-	colorPion color;
-	if(tour == 1) { color = NOIR; }
-	else { color = BLANC; }
 
 	// Etape 3 : On regarde si le pion a AU MOINS UNE liberté, sinon on regarde si il prend un autre pion/chaine
 	if(!checkLiberte(intersection)) { printf("PAS DE LIBERTE\n"); return false; }
@@ -156,7 +153,7 @@ void createGameFromFile(FILE* file, Goban *goban) {
     int colonne;
 
     fseek(file, 0, SEEK_SET);
-
+		colorPion last;
     while ((read = getline(&line, &len, file)) != -1) {
 
         if(i > 1) {
@@ -169,14 +166,18 @@ void createGameFromFile(FILE* file, Goban *goban) {
 
         	if(line[0] == 'B') {
         		intersection->pion = initPion(NOIR, true);
+						last = NOIR;
         	}
         	else {
         		intersection->pion = initPion(BLANC, true);
+						last = BLANC;
         	}
         }
-
         i++;
     }
+
+		if(last == BLANC) { setTour(NOIR); }
+		else { setTour(BLANC); }
 }
 
 int calculLiberte(Intersection **chaine, int longueurChaine) {

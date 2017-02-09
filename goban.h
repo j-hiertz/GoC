@@ -14,9 +14,9 @@ struct Goban{
 
 void initPlateau(Goban*, int, int, int);
 
-bool placerPion(FILE*, Goban*, Intersection*, int, int, int);
+bool placerPion(FILE*, Goban*, Intersection*, colorPion, int, int);
 
-bool checkPosePion(Goban*, Intersection*, int);
+bool checkPosePion(Goban*, Intersection*);
 
 void createGameFromFile(FILE*, Goban*);
 
