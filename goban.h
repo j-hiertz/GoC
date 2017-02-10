@@ -18,7 +18,15 @@ bool placerPion(FILE*, Goban*, Intersection*, int, int, int);
 
 bool checkPosePion(Goban*, Intersection*, int);
 
+bool checkLiberte(Intersection*);
+
+bool checkPriseChaine(Intersection*, colorPion, Intersection**, int*, bool);
+
+bool checkAlreadyUse(Intersection** intersections, int*, Intersection* inter);
+
 void createGameFromFile(FILE*, Goban*);
 
 int calculLiberte(Intersection **chaine, int longueurChaine);
-bool checkAlreadyUse(Intersection** intersections, int taille, Intersection* inter);
+
+void supprimerChaine(Intersection**, int*);
+
