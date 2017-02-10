@@ -95,7 +95,7 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion 
 	//char coupStr[6];
 
 	// On place le pion avant de vérifier, on supprimera par la suite si nécessaire
-	if(tour == 1) { // Pion noir
+	if(tour == NOIR) { // Pion noir
 		intersection->pion = initPion(NOIR, true);
 		//positionToChar(coupStr, colonne, ligne, 'B');
 	}

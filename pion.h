@@ -3,7 +3,7 @@
 	#include "boolean.h"
 #endif
 
-typedef enum { NOIR, BLANC} colorPion;
+typedef enum { BLANC, NOIR} colorPion;
 
 
 typedef struct Pion Pion;
