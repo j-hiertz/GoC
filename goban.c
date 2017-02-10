@@ -254,7 +254,6 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interDroite)){
 
 				if(prise){
-					printf("Intersection Droite : Pas de liberté\n");
 					prise = checkPriseChaine(inter->interDroite, color, alreadyUse, sizeUsed, prise);
 				}
 			}
@@ -263,7 +262,7 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 	}
 
 	// On regarde si l'intersection existe
-	/*if(inter->interBas) {
+	if(inter->interBas) {
 
 		if(inter->interBas->pion->couleur == color){
 
@@ -271,7 +270,6 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interBas)){
 
 				if(prise){
-
 					prise = checkPriseChaine(inter->interBas, color, alreadyUse, sizeUsed, prise);
 				}
 			}
@@ -283,19 +281,6 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 	if(inter->interGauche) {
 
 		if(inter->interGauche->pion->couleur == color){
-=======
-bool checkPosePion(Goban* goban, Intersection* intersection) {
-	// TODO : Enregistrement du pion dans l'intersection correspondante
-	// Etape 1 : On vérifie que la case est libre
-
-	if(intersection->pion) {
-		printf("Un pion est déjà présent sur la case %p\n", intersection);
-		return false;
-	}
-
-	// Etape 3 : On regarde si le pion a AU MOINS UNE liberté, sinon on regarde si il prend un autre pion/chaine
-	if(!checkLiberte(intersection)) { printf("PAS DE LIBERTE\n"); return false; }
->>>>>>> a0088a24f4d0fc7ed132b763502bd1c3b23fae9e
 
 			// On regarde si on l'a pas déjà utilisé
 			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interGauche)){
@@ -322,7 +307,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection) {
 			}
 
 		}
-	}*/
+	}
 
 	return prise;	
 	
@@ -380,53 +365,7 @@ bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection** alre
 		}
 	}
 
-	// On regarde si l'intersection existe
-	if(inter->interBas) {
-
-		if(inter->interBas->pion->couleur == color){
-
-			// On regarde si on l'a pas déjà utilisé
-			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interBas)){
-
-				if(!liberte) {
-					liberte = checkLiberteAllie(inter->interBas, color, alreadyUse, sizeUsed, liberte);
-				}
-			}
-
-		}
-	}
-
-	// On regarde si l'intersection existe
-	if(inter->interGauche) {
-
-		if(inter->interGauche->pion->couleur == color){
-
-			// On regarde si on l'a pas déjà utilisé
-			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interGauche)){
-
-				if(!liberte) {
-					liberte = checkLiberteAllie(inter->interGauche, color, alreadyUse, sizeUsed, liberte);
-				}
-			}
-
-		}
-	}
-
-	// On regarde si l'intersection existe
-	if(inter->interHaut) {
-
-		if(inter->interHaut->pion->couleur == color){
-
-			// On regarde si on l'a pas déjà utilisé
-			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interHaut)){
-
-				if(!liberte) {
-					liberte = checkLiberteAllie(inter->interHaut, color, alreadyUse, sizeUsed, liberte);
-				}
-			}
-
-		}
-	}
+	//TODO autre coté
 
 	return liberte;
 }
@@ -473,52 +412,3 @@ void createGameFromFile(FILE* file, Goban *goban) {
 		if(last == BLANC) { setTour(NOIR); }
 		else { setTour(BLANC); }
 }
-
-/*int calculLiberte(Intersection **chaine, int longueurChaine) {
-
-	int liberte = 0;
-	int lengthUse = 0;
-
-	Intersection** alreadyUse = malloc(1*sizeof(*alreadyUse));
-
-	for(int i = 0; i < longueurChaine; i++) {
-
-		bool detectLib = false;
-
-		if(chaine[i]->interHaut != NULL && chaine[i]->interHaut->pion == NULL &&
-			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interHaut)) {
-
-			detectLib = true;
-		}
-
-		if(chaine[i]->interBas != NULL && chaine[i]->interBas->pion == NULL &&
-			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interBas)) {
-
-			detectLib = true;
-		}
-
-		if(chaine[i]->interDroite != NULL && chaine[i]->interDroite->pion == NULL &&
-			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interDroite)) {
-
-			detectLib = true;
-		}
-
-		if(chaine[i]->interGauche != NULL && chaine[i]->interGauche->pion == NULL &&
-			!checkAlreadyUse(alreadyUse, lengthUse, chaine[i]->interGauche)) {
-
-			detectLib = true;
-		}
-
-		if(detectLib) {
-			liberte++;
-			lengthUse++;
-			alreadyUse = realloc(alreadyUse, lengthUse*sizeof(*alreadyUse));
-		}
-
-	}
-
-	free(alreadyUse);
-
-	return liberte;
-
-}*/
