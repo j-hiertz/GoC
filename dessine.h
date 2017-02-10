@@ -97,3 +97,8 @@ void string(int x, int y, char* chaine);
 	* change la taille de la fenetre
 	*/
 void resize_window(int width, int height);
+
+/**
+	* flush l'affichage pour le sleep
+	*/
+void xflush();

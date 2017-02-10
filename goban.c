@@ -125,7 +125,10 @@ bool checkPosePion(Goban* goban, Intersection* intersection) {
 	return true;
 }
 
-
+bool checkIfPion(Goban* goban, int x, int y) {
+	if(goban->intersections[x][y]->pion) { return true; }
+	return false;
+}
 
 bool checkLiberteRecusif(Intersection* inter) {
 	int verif = false;

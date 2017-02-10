@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #ifndef LIBRARY_H
 	#define LIBRARY_H
 	#include "dessine.h"
@@ -17,10 +18,15 @@ FILE *file;
 Button* pass;
 Button* save;
 Button* delete;
-bool passer;
+bool passer, deleteMode;
 
 void setTour(colorPion p) {
 	tour = p;
+}
+
+void calculPoints() {
+	// TODO: Ben... le calcul des points patate
+	printf("Attention parce que là ya de l'ago qui va sortir\n");
 }
 
 void draw_pion(int x, int y, colorPion colorPion){
@@ -81,13 +87,20 @@ void draw_tour_jeu() {
 }
 
 void click_pass() {
-	if(passer) { printf("PARTIE ARRETEE\n"); }
+	if(passer) { calculPoints(); }
 	else {
 		passer = true;
-		if(tour = BLANC) { tour = NOIR; }
+		if(tour == BLANC) { tour = NOIR; }
 		else { tour = BLANC; }
 		draw_tour_jeu();
 	}
+}
+
+void click_deleteMode() {
+	if(deleteMode) { deleteMode = false; }
+	else {deleteMode = true; }
+	//draw_plateau();
+	draw_menu_game_delete();
 }
 
 void click_menu_game(int x, int y) {
@@ -124,11 +137,13 @@ void draw_menu_game_delete() {
 	int del_h = del_w / 3;
 	int del_x = espaceCase * (nbCase) + espaceCase * 0.80;
 	int del_y = espaceCase * (nbCase / 2) + espaceCase * 1.5 + 60;
-	char deleteLbl[] = "Delete Mode: Off";
+	char *deleteLbl = malloc(sizeof(char)*16);
+	if(deleteMode) { deleteLbl = "Delete Mode: On "; }
+	else { deleteLbl = "Delete Mode: Off"; }
 
 	filled_rectangle(del_x, del_y, del_w, del_h);
 
-	delete = init_button(del_x, del_y, del_w, del_h, &click_pass);
+	delete = init_button(del_x, del_y, del_w, del_h, &click_deleteMode);
 
 	color(0, 0, 0);
 	rectangle(del_x, del_y, del_w, del_h);
@@ -217,6 +232,30 @@ bool checkBoundsGoban(int x, int y){
 	}
 
 	return true;
+}
+
+void whoIsPlaying() {
+	if(tour == NOIR) {
+		if(joueur1 == IA) {
+			printf("Je suis le joueur 1 et je suis une IA\n");
+			xflush();
+			sleep(2);
+			printf("Yoho, a mon tour de joujoujoujou...jouer !\n");
+			// Doing stone placement stuff ...
+			tour = BLANC;
+			draw_tour_jeu();
+		}
+	} else {
+		if (joueur2 == IA) {
+			printf("Je suis le joueur 2 et je suis une IA\n");
+			xflush();
+			sleep(2);
+			printf("Yoho, a mon tour de joujoujoujou...jouer !\n");
+			// Doing stone placement stuff ...
+			tour = NOIR;
+			draw_tour_jeu();
+		}
+	}
 }
 
 // Manage changing window
@@ -344,7 +383,7 @@ void mouse_clicked(int bouton, int x, int y) {
 		click_menu_game(x, y);
 	}
 
-	if(checkBoundsGoban(x, y) && !verif) {
+	if(checkBoundsGoban(x, y) && !verif && !deleteMode) {
 		// On défini la case la plus proche du click
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
 		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
@@ -358,9 +397,23 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 			passer = false;
 			draw_pion(inter->x,inter->y,tour);
+
 			if(tour == BLANC) { tour = NOIR; }
 			else { tour = BLANC; }
 			draw_tour_jeu();
+
+			//whoIsPlaying();
+		}
+	} else if(checkBoundsGoban(x, y) && deleteMode) {
+		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
+		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
+
+		if(checkIfPion(goban, ligne, colonne)) {
+			printf("THERE IS A STONE HERE, DELETE IT !!!\n");
+			goban->intersections[ligne][colonne]->pion = NULL;
+			int width = width_win();
+			int height = height_win();
+			draw_plateau(width, height);
 		}
 	}
 }
@@ -411,18 +464,19 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 3;
+	courFenetre = 0;
 	tour = NOIR;
 	joueur1 = JOUEUR;
 	joueur2 = IA;
 	passer = false;
+	deleteMode = false;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
 	}
 
 	if(nbCase == 0){
-		nbCase = 9;
+		nbCase = 19;
 	}
 
 	switch(nbCase)

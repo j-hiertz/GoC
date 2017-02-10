@@ -156,3 +156,7 @@ void resize_window (int width, int height)
 	}
 	XResizeWindow(display, win, width, height);
 }
+
+void xflush() {
+	XFlush(display);
+}
