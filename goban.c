@@ -187,7 +187,19 @@ bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
 
 	}
 
-	// Etape 5 : On regarde si on gagne une liberté avec une chaine allié
+	// Etape 5 : Si on a toujours aucune liberté, on regarde si on gagne une liberté avec une chaine allié
+	if(!liberte) {
+		// Chaine de droite
+		if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur == color) {
+
+			alreadyUse[0] = intersection->interDroite;
+			
+			if(checkLiberteAllie(intersection->interDroite, intersection->interDroite->pion->couleur, alreadyUse, &sizeUsed, false)) {
+				return true;
+			}
+
+		}
+	}
 
 
 
@@ -242,7 +254,7 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 	}
 
 	// On regarde si l'intersection existe
-	if(inter->interBas) {
+	/*if(inter->interBas) {
 
 		if(inter->interBas->pion->couleur == color){
 
@@ -288,7 +300,7 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 			}
 
 		}
-	}
+	}*/
 
 	return prise;	
 	
@@ -302,7 +314,6 @@ bool checkAlreadyUse(Intersection** intersections, int *taille, Intersection* in
 
 		// Comparaison des adresses mémoires
 		if(intersections[i] == inter) {
-			printf("COUCOU\n");
 			return true;
 		}
 	}
@@ -313,6 +324,83 @@ bool checkAlreadyUse(Intersection** intersections, int *taille, Intersection* in
 
 	intersections[i] = inter;
 	return false;
+}
+
+bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection** alreadyUse, int *sizeUsed, bool liberte) {
+
+	printf("Liberté de chaine alliée \n");
+	printf("Taille du tableau alreadyUse : %d\n", *sizeUsed);
+	printf("Intersection adresse: %p\n", alreadyUse[0]);
+
+	if(checkLiberte(inter)){
+		return true;
+	}
+
+	// On regarde si l'intersection existe
+	if(inter->interDroite) {
+
+		if(inter->interDroite->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interDroite)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interDroite, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
+
+	// On regarde si l'intersection existe
+	if(inter->interBas) {
+
+		if(inter->interBas->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interBas)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interBas, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
+
+	// On regarde si l'intersection existe
+	if(inter->interGauche) {
+
+		if(inter->interGauche->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interGauche)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interGauche, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
+
+	// On regarde si l'intersection existe
+	if(inter->interHaut) {
+
+		if(inter->interHaut->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interHaut)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interHaut, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
+
+	return liberte;
 }
 
 

@@ -30,3 +30,4 @@ int calculLiberte(Intersection **chaine, int longueurChaine);
 
 void supprimerChaine(Intersection**, int*);
 
+bool checkLiberteAllie(Intersection*, colorPion, Intersection**, int*, bool);
