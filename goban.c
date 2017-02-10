@@ -9,11 +9,18 @@
 
 extern void setTour(colorPion p);
 
+int sizeCaseOccuppe;
+
+int getSizeCaseOccupe() {
+	return sizeCaseOccuppe;
+}
+
 void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 	ptrGoban->nbCase = nbCase;
 	ptrGoban->width = width;
 	ptrGoban->height = height;
+	sizeCaseOccuppe = 0;
 
 	int espaceCase = 0;
 
@@ -95,6 +102,7 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion 
 
 		updateSGF(file, coupStr);
 
+		sizeCaseOccuppe++;
 		return true;
 	}
 
@@ -102,18 +110,18 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion 
 }
 
 int checkLiberte(Intersection* inter) {
-	if(inter->interHaut->pion == NULL) { return true; }
-	if(inter->interBas->pion == NULL) { return true; }
-	if(inter->interGauche->pion == NULL) { return true; }
-	if(inter->interDroite->pion == NULL) { return true; }
+	if(inter->interHaut == NULL || inter->interHaut->pion == NULL) { return true; }
+	if(inter->interBas == NULL || inter->interBas->pion == NULL) { return true; }
+	if(inter->interGauche == NULL || inter->interGauche->pion == NULL) { return true; }
+	if(inter->interDroite == NULL || inter->interDroite->pion == NULL) { return true; }
 
 	return false;
 }
 
 bool checkPosePion(Goban* goban, Intersection* intersection) {
 	// TODO : Enregistrement du pion dans l'intersection correspondante
-
 	// Etape 1 : On vérifie que la case est libre
+
 	if(intersection->pion) {
 		printf("Un pion est déjà présent sur la case %p\n", intersection);
 		return false;
@@ -175,6 +183,7 @@ void createGameFromFile(FILE* file, Goban *goban) {
         		intersection->pion = initPion(BLANC, true);
 						last = BLANC;
         	}
+					sizeCaseOccuppe++;
         }
         i++;
     }

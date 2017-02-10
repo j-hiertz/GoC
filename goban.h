@@ -12,6 +12,8 @@ struct Goban{
 	Intersection ***intersections;
 };
 
+int getSizeCaseOccupe();
+
 void initPlateau(Goban*, int, int, int);
 
 bool placerPion(FILE*, Goban*, Intersection*, colorPion, int, int);

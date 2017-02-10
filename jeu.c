@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #ifndef LIBRARY_H
 	#define LIBRARY_H
 	#include "dessine.h"
@@ -18,10 +19,14 @@ FILE *file;
 Button* pass;
 Button* save;
 Button* delete;
-bool passer, deleteMode;
+bool initialized, passer, deleteMode, gameFinished;
 
 void setTour(colorPion p) {
 	tour = p;
+}
+
+bool getInitialized() {
+	return initialized;
 }
 
 void calculPoints() {
@@ -87,7 +92,11 @@ void draw_tour_jeu() {
 }
 
 void click_pass() {
-	if(passer) { calculPoints(); }
+	printf("----- ----- UN JOUEUR A PASSER SON TOUR ----- -----\n");
+	if(passer) {
+		gameFinished = true;
+		calculPoints();
+	}
 	else {
 		passer = true;
 		if(tour == BLANC) { tour = NOIR; }
@@ -218,6 +227,7 @@ void draw_plateau(int width, int height)
 			Intersection* inter = goban->intersections[ligne][colonne];
 
 			if(inter->pion && inter->pion->visible) {
+				printf("Ya un pion à redessiner en %d %d", ligne, colonne);
 					draw_pion(inter->x, inter->y, inter->pion->couleur);
 			}
 		}
@@ -234,28 +244,92 @@ bool checkBoundsGoban(int x, int y){
 	return true;
 }
 
-void whoIsPlaying() {
-	if(tour == NOIR) {
-		if(joueur1 == IA) {
-			printf("Je suis le joueur 1 et je suis une IA\n");
-			xflush();
-			sleep(2);
-			printf("Yoho, a mon tour de joujoujoujou...jouer !\n");
-			// Doing stone placement stuff ...
-			tour = BLANC;
-			draw_tour_jeu();
-		}
-	} else {
-		if (joueur2 == IA) {
-			printf("Je suis le joueur 2 et je suis une IA\n");
-			xflush();
-			sleep(2);
-			printf("Yoho, a mon tour de joujoujoujou...jouer !\n");
-			// Doing stone placement stuff ...
-			tour = NOIR;
-			draw_tour_jeu();
-		}
+bool playIA(int ligne, int colonne) {
+
+	Intersection *inter = goban->intersections[ligne][colonne];
+	int random = rand() % 100;
+	int size = getSizeCaseOccupe();
+	printf("RANDOM GENERE: %d\n", random);
+
+	if(size > (nbCase*nbCase) * 0.5 && size < (nbCase*nbCase) * 0.6){
+		if(random < 3) { click_pass(); return false; }
+	} else if (size > (nbCase*nbCase) * 0.6 && size < (nbCase*nbCase) * 0.7){
+		if(random < 7) { click_pass(); return false; }
+	} else if (size > (nbCase*nbCase) * 0.7 && size < (nbCase*nbCase) * 0.8) {
+		if(random < 15) { click_pass(); return false; }
+	} else if (size > (nbCase*nbCase) * 0.8 && size < (nbCase*nbCase) * 0.9) {
+		if(random < 45) { click_pass(); return false; }
+	} else if (size > (nbCase*nbCase) * 0.9 && size < (nbCase*nbCase)) {
+		if(random < 75) { click_pass(); return false; }
+	} else if (size == (nbCase*nbCase)) {
+		click_pass();
+		return false;
 	}
+
+	if(placerPion(file, goban, inter, tour, colonne, ligne)) {
+
+		printf("Intersection -> pion %p\n", inter->pion);
+		printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+		passer = false;
+		draw_pion(inter->x,inter->y,tour);
+
+		if(tour == BLANC) { tour = NOIR; }
+		else { tour = BLANC; }
+		draw_tour_jeu();
+
+		printf("La couleur de la case est %d\n", goban->intersections[ligne][colonne]->pion->couleur);
+		return true;
+	} else {
+		colonne++;
+		if(colonne == nbCase) {
+			colonne = 0;
+			ligne++;
+		}
+		if(ligne == nbCase) {
+			ligne = 0;
+		}
+		return(playIA(ligne, colonne));
+	}
+}
+
+void whoIsPlaying() {
+	int milisec = 100; // Millisecondes entre chaqu coup joue
+	bool verif = true;
+
+	if(nbCase == 19) {
+		milisec = 150;
+	} else if (nbCase == 13) {
+		milisec = 300;
+	}
+
+	struct timespec req = {0};
+	req.tv_sec = 0;
+	req.tv_nsec = milisec * 1000000L;
+
+	srand(time(NULL));
+	int colonne1 = rand() % nbCase;
+	int ligne1 = rand() % nbCase;
+	int colonne2 = rand() % nbCase;
+	int ligne2 = rand() % nbCase;
+
+	if(tour == NOIR && joueur1 == IA && !gameFinished) {
+			printf("\nJe suis le joueur 1 et je suis une IA\n");
+			xflush();
+			nanosleep(&req, (struct timespec *)NULL);
+			verif = playIA(ligne1, colonne1);
+	}
+	if(tour == BLANC && joueur2 == IA && !gameFinished){
+			printf("\nJe suis le joueur 2 et je suis une IA\n");
+			xflush();
+			nanosleep(&req, (struct timespec *)NULL);
+			verif = playIA(ligne2, colonne2);
+	}
+	if(joueur1 == IA && joueur2 == IA && !gameFinished) { whoIsPlaying(); }
+}
+
+void refresh_plateau(int width, int height) {
+	clear_win();
+	draw_plateau(width, height);
 }
 
 // Manage changing window
@@ -273,8 +347,12 @@ void refresh_manager(int width, int height)
 		initPlateau(goban, width, height, nbCase);
 		file = createSGF(nbCase);
 		draw_plateau(width, height);
+		initialized = true;
+		whoIsPlaying();
 	} else if (courFenetre == 4) {
 		draw_plateau(width, height);
+		initialized = true;
+		whoIsPlaying();
 	}
 }
 
@@ -383,6 +461,15 @@ void mouse_clicked(int bouton, int x, int y) {
 		click_menu_game(x, y);
 	}
 
+	if(tour == NOIR && joueur1 == IA) {
+		printf("Laisse le temp à l'IA de jouer petit batard !\n");
+		return;
+	}
+	if(tour == BLANC && joueur2 == IA) {
+		printf("Laisse le temp à l'IA de jouer petit batard !\n");
+		return;
+	}
+
 	if(checkBoundsGoban(x, y) && !verif && !deleteMode) {
 		// On défini la case la plus proche du click
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
@@ -402,7 +489,7 @@ void mouse_clicked(int bouton, int x, int y) {
 			else { tour = BLANC; }
 			draw_tour_jeu();
 
-			//whoIsPlaying();
+			whoIsPlaying();
 		}
 	} else if(checkBoundsGoban(x, y) && deleteMode) {
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
@@ -464,19 +551,21 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 0;
+	courFenetre = 3;
 	tour = NOIR;
-	joueur1 = JOUEUR;
+	joueur1 = IA;
 	joueur2 = IA;
 	passer = false;
 	deleteMode = false;
+	initialized = false;
+	gameFinished = false;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
 	}
 
 	if(nbCase == 0){
-		nbCase = 19;
+		nbCase = 9;
 	}
 
 	switch(nbCase)

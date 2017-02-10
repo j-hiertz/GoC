@@ -1,4 +1,10 @@
-#include "dessine.h"
+#ifndef LIBRARY_H
+	#define LIBRARY_H
+	#include "dessine.h"
+	#include "goban.h"
+	#include "menu.h"
+	#include "file.h"
+#endif
 #include <string.h>
 
 
@@ -13,6 +19,8 @@ XWindowAttributes attr;
 
 
 extern void draw_plateau(int width, int height);
+extern bool getInitialized();
+extern void refresh_plateau(int width, int height);
 extern void refresh_manager(int width, int height);
 extern void draw_menu_load(int width, int height);
 extern void mouse_clicked(int bouton, int x, int y);
@@ -77,7 +85,11 @@ void event_loop()
 			printf("\n\n===EXPOSE===\nlargeur = %d\nhauteur = %d\n",attr.width,attr.height);
 			largeur_fenetre = attr.width;
 			hauteur_fenetre = attr.height;
-			refresh_manager(largeur_fenetre, hauteur_fenetre);
+			if(getInitialized()) {
+				refresh_plateau(largeur_fenetre, hauteur_fenetre);
+			} else {
+				refresh_manager(largeur_fenetre, hauteur_fenetre);
+			}
 			break;
 		case ButtonPress:
 			mouse_clicked(ev.xbutton.button,ev.xbutton.x,ev.xbutton.y);
