@@ -7,7 +7,9 @@ extern void loadParty();
 extern void setGoban19();
 extern void setGoban13();
 extern void setGoban9();
-extern void choixAdversaire();
+extern void choixJoueur1();
+extern void choixJoueur2();
+extern void validationAdversaire();
 
 Button** arrayButton = NULL;
 int sizeArray = 0;
@@ -105,9 +107,9 @@ void draw_goban_size(int width, int height) {
 	int goban9_y = btn3_y + (btn1_h / 2) + 4;
 
 	// Button registering...
-	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, setGoban19);
-	Button* btn2 = init_button(btn1_x, btn2_y, btn1_w, btn1_h, setGoban13);
-	Button* btn3 = init_button(btn1_x, btn3_y, btn1_w, btn1_h, setGoban9);
+	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, &setGoban19);
+	Button* btn2 = init_button(btn1_x, btn2_y, btn1_w, btn1_h, &setGoban13);
+	Button* btn3 = init_button(btn1_x, btn3_y, btn1_w, btn1_h, &setGoban9);
 
 	arrayButton = malloc(sizeof(Button) * 3);
 	sizeArray = 3;
@@ -123,34 +125,72 @@ void draw_goban_size(int width, int height) {
 	string(goban19_x, goban9_y, goban9);
 }
 
-void draw_choix_adversaire(int width, int height) {
+void setLabelButton(char* label, int btn_x, int btn_y, int btn_w, int btn_h, int sizeLabel) {
+	int label_x, label_y;
+
+	label_x = btn_x + (btn_w / 2) - (sizeLabel / 2);
+	label_y = btn_y + (btn_h / 2) + 3;
+
+	string(label_x, label_y, label);
+}
+
+void draw_choix_adversaire(int width, int height, typePlayer selectedPlayer1, typePlayer selectedPlayer2) {
 	resizeMenu(width, height);
 
 	char ia[] = "IA";
-	char two_player[] = "Deux joueurs";
+	char player[] = "Joueur";
+	char validation[] = "Valider";
+	int sizeLabelIa = 10;
+	int sizeLabelPlayer = 30;
+	int sizeValidation = 40;
+
+	char first_player[] = "Joueur 1";
+	char second_player[] = "Joueur 2";
 
 	// Determines x, y & size of button
 	int btn1_w = (width / 5);
 	int btn1_h = btn1_w / 2;
-	int btn1_x = btn1_w;
+	int btn1_x = (width / 4) - (btn1_w / 2);
 	int btn1_y = (height / 2) - (btn1_h / 2);
 
-	int new_party_x = btn1_x + (btn1_w / 2) - 5;
-	int new_party_y = btn1_y + (btn1_h / 2) + 3;
+	int btn2_x = (width / 4) * 3 - (btn1_w / 2);
 
-	int btn2_x = btn1_x + 2 * btn1_w;
-	int load_party_x = btn2_x + (btn1_w / 2) - 35;
+	int btn3_w = width / 4;
+	int btn3_h = btn3_w / 3;
+	int btn3_x = (width / 2) - (btn3_w / 2);
+	int btn3_y = height - (height / 4);
+
+	// Determines x, y & size of label
+	int lbl_joueur1_x = (width / 4) - 25;
+	int lbl_joueur1_y = height / 4;
+
+	int lbl_joueur2_x = (width / 4) * 3 - 25;
 
 	// Button registering...
-	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, &choixAdversaire);
-	Button* btn2 = init_button(btn2_x, btn1_y, btn1_w, btn1_h, &choixAdversaire);
-	arrayButton = malloc(sizeof(Button) * 2);
-	sizeArray = 2;
+	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, &choixJoueur1);
+	Button* btn2 = init_button(btn2_x, btn1_y, btn1_w, btn1_h, &choixJoueur2);
+	Button* btn3 = init_button(btn3_x, btn3_y, btn3_w, btn3_h, &validationAdversaire);
+	arrayButton = malloc(sizeof(Button) * 3);
+	sizeArray = 3;
 	arrayButton[0] = btn1;
 	arrayButton[1] = btn2;
+	arrayButton[2] = btn3;
 
+	// Displaying button & their label
 	rectangle(btn1_x, btn1_y, btn1_w, btn1_h);
-	string(new_party_x, new_party_y, ia);
 	rectangle(btn2_x, btn1_y, btn1_w, btn1_h);
-	string(load_party_x, new_party_y, two_player);
+	rectangle(btn3_x, btn3_y, btn3_w, btn3_h);
+
+	if(selectedPlayer1 == JOUEUR) { setLabelButton(player, btn1_x, btn1_y, btn1_w, btn1_h, sizeLabelPlayer); }
+	else { setLabelButton(ia, btn1_x, btn1_y, btn1_w, btn1_h, sizeLabelIa); }
+	if(selectedPlayer2 == JOUEUR) { setLabelButton(player, btn2_x, btn1_y, btn1_w, btn1_h, sizeLabelPlayer); }
+	else { setLabelButton(ia, btn2_x, btn1_y, btn1_w, btn1_h, sizeLabelIa); }
+
+	setLabelButton(validation, btn3_x, btn3_y, btn3_w, btn3_h, sizeValidation);
+
+	// Title labels displaying
+	string(lbl_joueur1_x, lbl_joueur1_y, first_player);
+	string(lbl_joueur2_x, lbl_joueur1_y, second_player);
+	line(width / 2, 0, width / 2, btn3_y);
+	line(width / 2, btn3_y + btn3_h, width / 2, height);
 }

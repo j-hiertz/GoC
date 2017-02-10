@@ -12,11 +12,15 @@ struct Goban{
 	Intersection ***intersections;
 };
 
+int getSizeCaseOccupe();
+
 void initPlateau(Goban*, int, int, int);
 
-bool placerPion(FILE*, Goban*, Intersection*, int, int, int);
+bool placerPion(FILE*, Goban*, Intersection*, colorPion, int, int);
 
-bool checkPosePion(Goban*, Intersection*, int);
+bool checkPosePion(Goban*, Intersection*, colorPion);
+
+bool checkIfPion(Goban*, int, int);
 
 bool checkLiberte(Intersection*);
 

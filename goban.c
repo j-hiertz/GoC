@@ -7,11 +7,20 @@
 	#include "dessine.h"
 #endif
 
+extern void setTour(colorPion p);
+
+int sizeCaseOccuppe;
+
+int getSizeCaseOccupe() {
+	return sizeCaseOccuppe;
+}
+
 void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 	ptrGoban->nbCase = nbCase;
 	ptrGoban->width = width;
 	ptrGoban->height = height;
+	sizeCaseOccuppe = 0;
 
 	int espaceCase = 0;
 
@@ -75,7 +84,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 }
 
-bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, int colonne, int ligne){
+bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion tour, int colonne, int ligne){
 	
 	// Etape 1 : On vérifie que la case est libre
 	if(intersection->pion) {
@@ -102,6 +111,7 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, 
 
 		//updateSGF(file, coupStr);
 
+		sizeCaseOccuppe++;
 		return true;
 	}
 
@@ -114,8 +124,7 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, int tour, 
 	return false;
 }
 
-
-bool checkPosePion(Goban* goban, Intersection* intersection, int tour) {
+bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 	bool liberte = false;
 
@@ -274,6 +283,19 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 	if(inter->interGauche) {
 
 		if(inter->interGauche->pion->couleur == color){
+=======
+bool checkPosePion(Goban* goban, Intersection* intersection) {
+	// TODO : Enregistrement du pion dans l'intersection correspondante
+	// Etape 1 : On vérifie que la case est libre
+
+	if(intersection->pion) {
+		printf("Un pion est déjà présent sur la case %p\n", intersection);
+		return false;
+	}
+
+	// Etape 3 : On regarde si le pion a AU MOINS UNE liberté, sinon on regarde si il prend un autre pion/chaine
+	if(!checkLiberte(intersection)) { printf("PAS DE LIBERTE\n"); return false; }
+>>>>>>> a0088a24f4d0fc7ed132b763502bd1c3b23fae9e
 
 			// On regarde si on l'a pas déjà utilisé
 			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interGauche)){
@@ -310,6 +332,7 @@ bool checkAlreadyUse(Intersection** intersections, int *taille, Intersection* in
 
 	int i = 0;
 
+
 	for(i = 0; i < *taille; i++) {
 
 		// Comparaison des adresses mémoires
@@ -323,6 +346,11 @@ bool checkAlreadyUse(Intersection** intersections, int *taille, Intersection* in
 	intersections = realloc(intersections, *taille * sizeof(*intersections));
 
 	intersections[i] = inter;
+	return false;
+}
+
+bool checkIfPion(Goban* goban, int x, int y) {
+	if(goban->intersections[x][y]->pion) { return true; }
 	return false;
 }
 
@@ -418,7 +446,7 @@ void createGameFromFile(FILE* file, Goban *goban) {
     int colonne;
 
     fseek(file, 0, SEEK_SET);
-
+		colorPion last;
     while ((read = getline(&line, &len, file)) != -1) {
 
         if(i > 1) {
@@ -431,14 +459,19 @@ void createGameFromFile(FILE* file, Goban *goban) {
 
         	if(line[0] == 'B') {
         		intersection->pion = initPion(NOIR, true);
+						last = NOIR;
         	}
         	else {
         		intersection->pion = initPion(BLANC, true);
+						last = BLANC;
         	}
+					sizeCaseOccuppe++;
         }
-
         i++;
     }
+
+		if(last == BLANC) { setTour(NOIR); }
+		else { setTour(BLANC); }
 }
 
 /*int calculLiberte(Intersection **chaine, int longueurChaine) {

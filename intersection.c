@@ -15,6 +15,7 @@ Intersection* initIntersection(int x, int y) {
 	inter->interDroite = NULL;
 	inter->interBas = NULL;
 	inter->interGauche = NULL;
+	inter->alreadyUse = false;
 
 	return inter;
 }

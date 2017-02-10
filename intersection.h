@@ -12,6 +12,7 @@ struct Intersection{
 	Intersection* interDroite;
 	Intersection* interBas;
 	Intersection* interGauche;
+	bool alreadyUse;
 };
 
 Intersection* initIntersection(int, int);

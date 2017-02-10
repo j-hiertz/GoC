@@ -7,9 +7,12 @@ typedef struct Button{
 	void (*click)();
 } Button;
 
+typedef enum { IA, JOUEUR} typePlayer;
+
 void freeButtons();
-int checkClick(int x, int y);
-Button* init_button(int x, int y, int w, int h, void(*c)());
-void draw_menu_load(int width, int height);
-void draw_goban_size(int width, int height);
-void draw_choix_adversaire(int width, int height);
+int checkClick(int, int);
+Button* init_button(int, int, int, int, void(*c)());
+void draw_menu_load(int, int);
+void draw_goban_size(int, int);
+void setLabelButton(char*, int, int, int, int, int);
+void draw_choix_adversaire(int, int, typePlayer, typePlayer);
