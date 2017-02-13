@@ -29,9 +29,69 @@ bool getInitialized() {
 	return initialized;
 }
 
+bool calculTerritoire(Intersection* inter, colorPion* couleur, bool verif) {
+	inter->alreadyUse = true;
+
+	if(inter->interHaut && inter->interHaut->pion && verif) {
+		printf("Oh un pion en haut !\n");
+		if(!couleur) { couleur = &inter->interHaut->pion->couleur; }
+		else if ( *couleur != inter->interHaut->pion->couleur ) { verif = false; }
+	} else if (inter->interHaut && !inter->interHaut->pion && !inter->interHaut->alreadyUse) {
+		printf("Passage en haut\n");
+		verif = calculTerritoire(inter->interHaut, couleur, verif);
+	}
+
+	if(inter->interDroite && inter->interDroite->pion && verif) {
+		printf("Oh un pion a droite !\n");
+		if(!couleur) { couleur = &inter->interDroite->pion->couleur; }
+		else if ( *couleur != inter->interDroite->pion->couleur ) { verif = false; }
+	} else if (inter->interDroite && !inter->interDroite->pion && !inter->interDroite->alreadyUse) {
+		printf("Passage a droite\n");
+		verif = calculTerritoire(inter->interDroite, couleur, verif);
+	}
+
+	if(inter->interBas && inter->interBas->pion && verif) {
+		printf("Oh un pion en bas !\n");
+		if(!couleur) { couleur = &inter->interBas->pion->couleur; }
+		else if ( *couleur != inter->interBas->pion->couleur ) { verif = false; }
+	} else if (inter->interBas && !inter->interBas->pion && !inter->interBas->alreadyUse) {
+		printf("Passage en bas\n");
+		verif = calculTerritoire(inter->interBas, couleur, verif);
+	}
+
+	if(inter->interGauche && inter->interGauche->pion && verif) {
+		printf("Oh un pion a gauche !\n");
+		if(!couleur) { couleur = &inter->interGauche->pion->couleur; }
+		else if ( *couleur != inter->interGauche->pion->couleur ) { verif = false; }
+	} else if (inter->interGauche && !inter->interGauche->pion && !inter->interGauche->alreadyUse) {
+		printf("Passage a gauche\n");
+		verif = calculTerritoire(inter->interGauche, couleur, verif);
+	}
+
+	return verif;
+}
+
 void calculPoints() {
 	// TODO: Ben... le calcul des points patate
 	printf("Attention parce que là ya de l'ago qui va sortir\n");
+	colorPion* couleur = NULL;
+	int count = 0;
+	bool verif = true;
+	/*if(couleur) {
+		printf("YA UNE COULEUR");
+	} else {
+		printf("YA PAS DE COULEUR");
+	}*/
+
+	for(int i = 0; i < nbCase; i++) {
+		for(int y = 0; y < nbCase; y++) {
+			if(!goban->intersections[i][y]->pion && !goban->intersections[i][y]->alreadyUse) {
+				printf("----------- VERIFICATION TERRITOIRE [%d][%d] -----------\n", i, y);
+				verif = calculTerritoire(goban->intersections[i][y], couleur, true);
+				printf("----------- FIN CALCUL - TERRITOIRE : %d -----------\n", verif);
+			}
+		}
+	}
 }
 
 void draw_pion(int x, int y, colorPion colorPion){
