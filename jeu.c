@@ -370,12 +370,18 @@ bool playIA(int ligne, int colonne) {
 		printf("La couleur de la case est %d\n", goban->intersections[ligne][colonne]->pion->couleur);
 		return true;
 	} else {
-		colonne++;
-		if(colonne == nbCase) {
+		// Joue aleatoirement sur un des cotes de la piece
+		int place = rand() % 4;
+		if(place == 0) { ligne--; }
+		else if(place == 1) { colonne++; }
+		else if(place == 2) { ligne++; }
+		else { colonne--; }
+
+		if(colonne >= nbCase || colonne < 0) {
 			colonne = 0;
 			ligne++;
 		}
-		if(ligne == nbCase) {
+		if(ligne >= nbCase || ligne < 0) {
 			ligne = 0;
 		}
 		return(playIA(ligne, colonne));
@@ -640,10 +646,10 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 0;
+	courFenetre = 3;
 	tour = NOIR;
-	joueur1 = JOUEUR;
-	joueur2 = JOUEUR;
+	joueur1 = IA;
+	joueur2 = IA;
 	passer = false;
 	deleteMode = false;
 	initialized = false;
