@@ -613,8 +613,8 @@ int main(int argc, char **argv) {
 	int width, height;
 	courFenetre = 3;
 	tour = NOIR;
-	joueur1 = IA;
-	joueur2 = IA;
+	joueur1 = JOUEUR;
+	joueur2 = JOUEUR;
 	passer = false;
 	deleteMode = false;
 	initialized = false;
