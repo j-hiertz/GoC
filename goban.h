@@ -24,14 +24,16 @@ bool checkIfPion(Goban*, int, int);
 
 bool checkLiberte(Intersection*);
 
-bool checkPriseChaine(Intersection*, colorPion, Intersection**, int*, bool);
+bool checkPriseChaine(Intersection*, colorPion, Intersection***, int*, bool);
 
-bool checkAlreadyUse(Intersection** intersections, int*, Intersection* inter);
+bool checkAlreadyUse(Intersection*** intersections, int*, Intersection* inter);
 
 void createGameFromFile(FILE*, Goban*);
 
 int calculLiberte(Intersection **chaine, int longueurChaine);
 
-void supprimerChaine(Intersection**, int*);
+void supprimerChaine(Intersection***, int*);
 
-bool checkLiberteAllie(Intersection*, colorPion, Intersection**, int*, bool);
+bool checkLiberteAllie(Intersection*, colorPion, Intersection***, int*, bool);
+
+void reAllocAlreadyUse(Intersection***, int*);

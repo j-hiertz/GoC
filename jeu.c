@@ -573,8 +573,8 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 			passer = false;
-			draw_pion(inter->x,inter->y,tour);
-
+			//draw_pion(inter->x,inter->y,tour);
+			draw_plateau(width_win(),height_win());
 			if(tour == BLANC) { tour = NOIR; }
 			else { tour = BLANC; }
 			draw_tour_jeu();
@@ -640,7 +640,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 3;
+	courFenetre = 0;
 	tour = NOIR;
 	joueur1 = JOUEUR;
 	joueur2 = JOUEUR;
