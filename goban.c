@@ -90,7 +90,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 }
 
 bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion tour, int colonne, int ligne){
-	
+
 	// Etape 1 : On vérifie que la case est libre
 	if(intersection->pion) {
 		printf("Un pion est déjà présent sur la case %p\n", intersection);
@@ -98,7 +98,7 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion 
 	}
 
 	//char coupStr[6];
-
+	
 	// On place le pion avant de vérifier, on supprimera par la suite si nécessaire
 
 	intersection->pion = initPion(tour, true);
@@ -129,7 +129,6 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 	bool liberte = false;
 
-
 	// Etape 2 : On regarde si le pion a AU MOINS UNE liberté direct
 	if(checkLiberte(intersection)) { 
 		liberte = true;
@@ -145,6 +144,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interDroite;
+
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interDroite, intersection->interDroite->pion->couleur, &alreadyUse, &sizeUsed, true)) {
 			
@@ -160,6 +160,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	if(intersection->interBas && intersection->interBas->pion && intersection->interBas->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interBas;
+
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interBas, intersection->interBas->pion->couleur, &alreadyUse, &sizeUsed, true)) {
 			
@@ -175,6 +176,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	if(intersection->interGauche && intersection->interGauche->pion && intersection->interGauche->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interGauche;
+
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interGauche, intersection->interGauche->pion->couleur, &alreadyUse, &sizeUsed, true)) {
 			
@@ -190,6 +192,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	if(intersection->interHaut && intersection->interHaut->pion && intersection->interHaut->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interHaut;
+
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interHaut, intersection->interHaut->pion->couleur, &alreadyUse, &sizeUsed, true)) {
 			
@@ -207,7 +210,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 		if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur == tour) {
 
 			alreadyUse[0] = intersection->interDroite;
-			
+
 			if(checkLiberteAllie(intersection->interDroite, intersection->interDroite->pion->couleur, alreadyUse, &sizeUsed, false)) {
 				return true;
 			}
@@ -322,8 +325,8 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection*** alre
 		}
 	}
 
-	return prise;	
-	
+	return prise;
+
 }
 
 bool checkAlreadyUse(Intersection*** intersections, int *taille, Intersection* inter) {

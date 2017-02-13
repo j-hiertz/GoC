@@ -29,80 +29,97 @@ bool getInitialized() {
 	return initialized;
 }
 
-bool calculTerritoire(Intersection* inter, colorPion* couleur, bool verif) {
+// Parcours une zone vide et inspecte les pions alentours
+bool calculTerritoire(Intersection* inter, colorPion *couleur, bool verif, int *count) {
 	inter->alreadyUse = true;
+	(*count)++;
 
 	if(inter->interHaut && inter->interHaut->pion && verif) {
 		printf("Oh un pion en haut !\n");
-		if(!couleur) { couleur = &inter->interHaut->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interHaut->pion->couleur; }
 		else if ( *couleur != inter->interHaut->pion->couleur ) { verif = false; }
 	} else if (inter->interHaut && !inter->interHaut->pion && !inter->interHaut->alreadyUse) {
 		printf("Passage en haut\n");
-		verif = calculTerritoire(inter->interHaut, couleur, verif);
+		verif = calculTerritoire(inter->interHaut, couleur, verif, count);
 	}
 
 	if(inter->interDroite && inter->interDroite->pion && verif) {
 		printf("Oh un pion a droite !\n");
-		if(!couleur) { couleur = &inter->interDroite->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interDroite->pion->couleur; }
 		else if ( *couleur != inter->interDroite->pion->couleur ) { verif = false; }
 	} else if (inter->interDroite && !inter->interDroite->pion && !inter->interDroite->alreadyUse) {
 		printf("Passage a droite\n");
-		verif = calculTerritoire(inter->interDroite, couleur, verif);
+		verif = calculTerritoire(inter->interDroite, couleur, verif, count);
 	}
 
 	if(inter->interBas && inter->interBas->pion && verif) {
 		printf("Oh un pion en bas !\n");
-		if(!couleur) { couleur = &inter->interBas->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interBas->pion->couleur; }
 		else if ( *couleur != inter->interBas->pion->couleur ) { verif = false; }
 	} else if (inter->interBas && !inter->interBas->pion && !inter->interBas->alreadyUse) {
 		printf("Passage en bas\n");
-		verif = calculTerritoire(inter->interBas, couleur, verif);
+		verif = calculTerritoire(inter->interBas, couleur, verif, count);
 	}
 
 	if(inter->interGauche && inter->interGauche->pion && verif) {
 		printf("Oh un pion a gauche !\n");
-		if(!couleur) { couleur = &inter->interGauche->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interGauche->pion->couleur; }
 		else if ( *couleur != inter->interGauche->pion->couleur ) { verif = false; }
 	} else if (inter->interGauche && !inter->interGauche->pion && !inter->interGauche->alreadyUse) {
 		printf("Passage a gauche\n");
-		verif = calculTerritoire(inter->interGauche, couleur, verif);
+		verif = calculTerritoire(inter->interGauche, couleur, verif, count);
 	}
 
 	return verif;
 }
 
+// Recupere les territoires possede et les additionnes au score du joueur
 void calculPoints() {
-	// TODO: Ben... le calcul des points patate
 	printf("Attention parce que là ya de l'ago qui va sortir\n");
-	colorPion* couleur = NULL;
-	int count = 0;
+	colorPion couleur = UNDEFINED;
+	int count, pointsJoueur1, pointsJoueur2 = 0;
 	bool verif = true;
-	/*if(couleur) {
-		printf("YA UNE COULEUR");
-	} else {
-		printf("YA PAS DE COULEUR");
-	}*/
 
 	for(int i = 0; i < nbCase; i++) {
 		for(int y = 0; y < nbCase; y++) {
 			if(!goban->intersections[i][y]->pion && !goban->intersections[i][y]->alreadyUse) {
 				printf("----------- VERIFICATION TERRITOIRE [%d][%d] -----------\n", i, y);
-				verif = calculTerritoire(goban->intersections[i][y], couleur, true);
+				verif = calculTerritoire(goban->intersections[i][y], &couleur, true, &count);
 				printf("----------- FIN CALCUL - TERRITOIRE : %d -----------\n", verif);
+				printf("Joueur: %d\n", couleur);
+
+				if(couleur == NOIR && verif) {
+					pointsJoueur1 += count;
+				} else if (couleur == BLANC && verif) {
+					pointsJoueur2 += count;
+				}
+
+				count = 0;
+			} else if (goban->intersections[i][y]->pion) {
+				if(goban->intersections[i][y]->pion->couleur == NOIR) {
+					pointsJoueur1++;
+				} else if(goban->intersections[i][y]->pion->couleur == BLANC) {
+					pointsJoueur2++;
+				}
 			}
 		}
 	}
+
+	printf("RECAPITULATIF : \n");
+	printf("JOUEUR 1: %d points\n", pointsJoueur1);
+	printf("JOUEUR 2: %d points\n", pointsJoueur2);
 }
 
+// Dessine un pion
 void draw_pion(int x, int y, colorPion colorPion){
 
 	if(colorPion == BLANC){ color(1,1,1); }
 	else { color(0,0,0); }
 
-	// Taille du pion
 	filled_circle(x,y,(espaceCase /2)*0.85);
 }
 
+// Dessine les hoshis
 void draw_hoshi(int width, int height){
 
 	int i,j;
@@ -141,6 +158,7 @@ void draw_hoshi(int width, int height){
 	}
 }
 
+// Dessine les tours de jeu
 void draw_tour_jeu() {
 	color(0, 0, 0);
 	char tourLbl[] = "Prochaine pierre";
@@ -151,6 +169,7 @@ void draw_tour_jeu() {
 	draw_pion(espaceCase * nbCase + 110, espaceCase * 2 + (espaceCase / 4), tour);
 }
 
+// Gere le click sur le bouton passer
 void click_pass() {
 	printf("----- ----- UN JOUEUR A PASSER SON TOUR ----- -----\n");
 	if(passer) {
@@ -162,9 +181,11 @@ void click_pass() {
 		if(tour == BLANC) { tour = NOIR; }
 		else { tour = BLANC; }
 		draw_tour_jeu();
+		whoIsPlaying();
 	}
 }
 
+// Gere le click sur le bouton delete
 void click_deleteMode() {
 	if(deleteMode) { deleteMode = false; }
 	else {deleteMode = true; }
@@ -172,6 +193,7 @@ void click_deleteMode() {
 	draw_menu_game_delete();
 }
 
+// Gere les clicks a l'exterieur du goban
 void click_menu_game(int x, int y) {
 
 	if(x > pass->x && x < pass->x + pass->w && y > pass->y && y < pass->y + pass->h) {
@@ -183,12 +205,13 @@ void click_menu_game(int x, int y) {
 	}
 }
 
+// Dessine le bouton passer
 void draw_menu_game_pass() {
 	color(1, 1, 1);
-	int pass_w = espaceCase * 3;
+	int pass_w = 120;
 	int pass_h = pass_w / 2;
-	int pass_x = espaceCase * (nbCase) + espaceCase * 0.80;
-	int pass_y = espaceCase * (nbCase / 2) + 40;
+	int pass_x = espaceCase * nbCase + 50;
+	int pass_y = espaceCase * (nbCase / 3) + 60;
 	char passerLbl[] = "Passer";
 
 	filled_rectangle(pass_x, pass_y, pass_w, pass_h);
@@ -200,12 +223,13 @@ void draw_menu_game_pass() {
 	setLabelButton(passerLbl, pass_x, pass_y, pass_w, pass_h, 30);
 }
 
+// Dessine le bouton delete
 void draw_menu_game_delete() {
 	color(1, 1, 1);
-	int del_w = espaceCase * 3;
+	int del_w = 120;
 	int del_h = del_w / 3;
-	int del_x = espaceCase * (nbCase) + espaceCase * 0.80;
-	int del_y = espaceCase * (nbCase / 2) + espaceCase * 1.5 + 60;
+	int del_x = espaceCase * nbCase + 50;
+	int del_y = espaceCase * (nbCase / 3) + 140;
 	char *deleteLbl = malloc(sizeof(char)*16);
 	if(deleteMode) { deleteLbl = "Delete Mode: On "; }
 	else { deleteLbl = "Delete Mode: Off"; }
@@ -219,12 +243,13 @@ void draw_menu_game_delete() {
 	setLabelButton(deleteLbl, del_x, del_y, del_w, del_h, 85);
 }
 
+// Dessine le bouton sauvegarder
 void draw_menu_game_save() {
 	color(1, 1, 1);
-	int save_w = espaceCase * 3;
+	int save_w = 120;
 	int save_h = save_w / 3;
-	int save_x = espaceCase * (nbCase) + espaceCase * 0.80;
-	int save_y = espaceCase * (nbCase / 2) - save_h + 20;
+	int save_x = espaceCase * nbCase + 50;
+	int save_y = espaceCase * (nbCase / 3);
 	char saveLbl[] = "Sauvegarder";
 
 	filled_rectangle(save_x, save_y, save_w, save_h);
@@ -236,14 +261,15 @@ void draw_menu_game_save() {
 	setLabelButton(saveLbl, save_x, save_y, save_w, save_h, 50);
 }
 
+// Gere l'affichage du menu du jeu
 void draw_init_menu_game(int width, int height) {
-	// TODO: bouton passer tour / bouton sauvegarder / bouton enlever pierres mortes / tour de jeu
 	draw_menu_game_pass();
 	draw_menu_game_save();
 	draw_menu_game_delete();
 	draw_tour_jeu();
 }
 
+// Dessine le plateau
 void draw_plateau(int width, int height)
 {
 	clear_win();
@@ -611,7 +637,7 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 3;
+	courFenetre = 0;
 	tour = NOIR;
 	joueur1 = JOUEUR;
 	joueur2 = JOUEUR;
@@ -625,7 +651,7 @@ int main(int argc, char **argv) {
 	}
 
 	if(nbCase == 0){
-		nbCase = 9;
+		nbCase = 19;
 	}
 
 	switch(nbCase)
