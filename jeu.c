@@ -29,69 +29,93 @@ bool getInitialized() {
 	return initialized;
 }
 
-bool calculTerritoire(Intersection* inter, colorPion* couleur, bool verif) {
+bool calculTerritoire(Intersection* inter, colorPion *couleur, bool verif, int *count) {
 	inter->alreadyUse = true;
+	(*count)++;
 
 	if(inter->interHaut && inter->interHaut->pion && verif) {
 		printf("Oh un pion en haut !\n");
-		if(!couleur) { couleur = &inter->interHaut->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interHaut->pion->couleur; printf("PASSAGE COULEUR: %d\n", inter->interHaut->pion->couleur); }
 		else if ( *couleur != inter->interHaut->pion->couleur ) { verif = false; }
 	} else if (inter->interHaut && !inter->interHaut->pion && !inter->interHaut->alreadyUse) {
 		printf("Passage en haut\n");
-		verif = calculTerritoire(inter->interHaut, couleur, verif);
+		verif = calculTerritoire(inter->interHaut, couleur, verif, count);
 	}
 
 	if(inter->interDroite && inter->interDroite->pion && verif) {
 		printf("Oh un pion a droite !\n");
-		if(!couleur) { couleur = &inter->interDroite->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interDroite->pion->couleur; printf("PASSAGE COULEUR: %d\n", inter->interDroite->pion->couleur); }
 		else if ( *couleur != inter->interDroite->pion->couleur ) { verif = false; }
 	} else if (inter->interDroite && !inter->interDroite->pion && !inter->interDroite->alreadyUse) {
 		printf("Passage a droite\n");
-		verif = calculTerritoire(inter->interDroite, couleur, verif);
+		verif = calculTerritoire(inter->interDroite, couleur, verif, count);
 	}
 
 	if(inter->interBas && inter->interBas->pion && verif) {
 		printf("Oh un pion en bas !\n");
-		if(!couleur) { couleur = &inter->interBas->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interBas->pion->couleur; printf("PASSAGE COULEUR: %d\n", inter->interBas->pion->couleur); }
 		else if ( *couleur != inter->interBas->pion->couleur ) { verif = false; }
 	} else if (inter->interBas && !inter->interBas->pion && !inter->interBas->alreadyUse) {
 		printf("Passage en bas\n");
-		verif = calculTerritoire(inter->interBas, couleur, verif);
+		verif = calculTerritoire(inter->interBas, couleur, verif, count);
 	}
 
 	if(inter->interGauche && inter->interGauche->pion && verif) {
 		printf("Oh un pion a gauche !\n");
-		if(!couleur) { couleur = &inter->interGauche->pion->couleur; }
+		if(*couleur == UNDEFINED) { *couleur = inter->interGauche->pion->couleur; printf("PASSAGE COULEUR: %d\n", inter->interGauche->pion->couleur); }
 		else if ( *couleur != inter->interGauche->pion->couleur ) { verif = false; }
 	} else if (inter->interGauche && !inter->interGauche->pion && !inter->interGauche->alreadyUse) {
 		printf("Passage a gauche\n");
-		verif = calculTerritoire(inter->interGauche, couleur, verif);
+		verif = calculTerritoire(inter->interGauche, couleur, verif, count);
 	}
 
 	return verif;
 }
 
+void test(colorPion *pion) {
+	if(*pion == UNDEFINED) {
+		printf(" COULEUR DE LA CASE: %d\n", goban->intersections[1][1]->pion->couleur);
+		*pion = goban->intersections[1][1]->pion->couleur;
+		test(pion);
+	}
+}
+
 void calculPoints() {
 	// TODO: Ben... le calcul des points patate
 	printf("Attention parce que là ya de l'ago qui va sortir\n");
-	colorPion* couleur = NULL;
-	int count = 0;
+	colorPion couleur = UNDEFINED;
+	//couleur = NULL;
+	int count, pointsJoueur1, pointsJoueur2 = 0;
 	bool verif = true;
-	/*if(couleur) {
-		printf("YA UNE COULEUR");
-	} else {
-		printf("YA PAS DE COULEUR");
-	}*/
 
 	for(int i = 0; i < nbCase; i++) {
 		for(int y = 0; y < nbCase; y++) {
 			if(!goban->intersections[i][y]->pion && !goban->intersections[i][y]->alreadyUse) {
 				printf("----------- VERIFICATION TERRITOIRE [%d][%d] -----------\n", i, y);
-				verif = calculTerritoire(goban->intersections[i][y], couleur, true);
+				verif = calculTerritoire(goban->intersections[i][y], &couleur, true, &count);
 				printf("----------- FIN CALCUL - TERRITOIRE : %d -----------\n", verif);
+				printf("Joueur: %d\n", couleur);
+
+				if(couleur == NOIR && verif) {
+					pointsJoueur1 += count;
+				} else if (couleur == BLANC && verif) {
+					pointsJoueur2 += count;
+				}
+
+				count = 0;
+			} else if (goban->intersections[i][y]->pion) {
+				if(goban->intersections[i][y]->pion->couleur == NOIR) {
+					pointsJoueur1++;
+				} else if(goban->intersections[i][y]->pion->couleur == BLANC) {
+					pointsJoueur2++;
+				}
 			}
 		}
 	}
+
+	printf("RECAPITULATIF : \n");
+	printf("JOUEUR 1: %d points\n", pointsJoueur1);
+	printf("JOUEUR 2: %d points\n", pointsJoueur2);
 }
 
 void draw_pion(int x, int y, colorPion colorPion){
@@ -162,6 +186,7 @@ void click_pass() {
 		if(tour == BLANC) { tour = NOIR; }
 		else { tour = BLANC; }
 		draw_tour_jeu();
+		whoIsPlaying();
 	}
 }
 
@@ -613,7 +638,7 @@ int main(int argc, char **argv) {
 	int width, height;
 	courFenetre = 3;
 	tour = NOIR;
-	joueur1 = IA;
+	joueur1 = JOUEUR;
 	joueur2 = IA;
 	passer = false;
 	deleteMode = false;
@@ -625,7 +650,7 @@ int main(int argc, char **argv) {
 	}
 
 	if(nbCase == 0){
-		nbCase = 9;
+		nbCase = 19;
 	}
 
 	switch(nbCase)
