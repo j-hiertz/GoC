@@ -72,10 +72,15 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 	ptrGoban->intersections = intersections;
 
 	// ============================= TEST PURPOSE =============================
-	for(int ligne = 0; ligne < nbCase; ligne++){
+	for(int ligne = nbCase-1; ligne >= 0; ligne--){
 
-		for(int colonne = 0; colonne < nbCase; colonne++) {
-			printf("%d:%d ", intersections[ligne][colonne]->x, intersections[ligne][colonne]->y);
+		for(int colonne = nbCase-1; colonne >= 0; colonne--) {
+			//printf("%d:%d ", intersections[ligne][colonne]->x, intersections[ligne][colonne]->y);
+			Intersection* i = intersections[ligne][colonne];
+
+			if(i->interGauche) {
+				printf("%d:%d ", i->interGauche->x, i->interGauche->y);
+			}
 		}
 
 		printf("\n");
@@ -128,24 +133,20 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 	bool liberte = false;
 
-	// Etape 2 : On récupère la couleur jouée
-	colorPion color;
-	if(tour == 1) { color = NOIR; }
-	else { color = BLANC; }
 
-	// Etape 3 : On regarde si le pion a AU MOINS UNE liberté direct
+	// Etape 2 : On regarde si le pion a AU MOINS UNE liberté direct
 	if(checkLiberte(intersection)) { 
 		liberte = true;
 	}
 
-	// Etape 4 : On regarde si on prend une chaine adverse
+	// Etape 3 : On regarde si on prend une chaine adverse
 	Intersection** alreadyUse = malloc(sizeof(*alreadyUse));
 	int sizeUsed = 1;
 
 	printf("Intersection adresse: %p\n", intersection);
 
 	// Chaine de droite
-	if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur != color) {
+/*	if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interDroite;
 		
@@ -158,7 +159,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	}
 
 	// Chaine du bas
-	if(intersection->interBas && intersection->interBas->pion && intersection->interBas->pion->couleur != color) {
+	if(intersection->interBas && intersection->interBas->pion && intersection->interBas->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interBas;
 		
@@ -171,7 +172,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	}
 
 	// Chaine de gauche
-	if(intersection->interGauche && intersection->interGauche->pion && intersection->interGauche->pion->couleur != color) {
+	if(intersection->interGauche && intersection->interGauche->pion && intersection->interGauche->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interGauche;
 		
@@ -184,7 +185,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	}
 
 	// Chaine du haut
-	if(intersection->interHaut && intersection->interHaut->pion && intersection->interHaut->pion->couleur != color) {
+	if(intersection->interHaut && intersection->interHaut->pion && intersection->interHaut->pion->couleur != tour) {
 
 		alreadyUse[0] = intersection->interHaut;
 		
@@ -196,10 +197,10 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 	}
 
-	// Etape 5 : Si on a toujours aucune liberté, on regarde si on gagne une liberté avec une chaine allié
+	// Etape 4 : Si on a toujours aucune liberté, on regarde si on gagne une liberté avec une chaine allié
 	if(!liberte) {
 		// Chaine de droite
-		if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur == color) {
+		if(intersection->interDroite && intersection->interDroite->pion && intersection->interDroite->pion->couleur == tour) {
 
 			alreadyUse[0] = intersection->interDroite;
 			
@@ -209,7 +210,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 		}
 	}
-
+*/
 
 
 	return liberte;
@@ -315,6 +316,8 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection** alrea
 
 bool checkAlreadyUse(Intersection** intersections, int *taille, Intersection* inter) {
 
+	printf("Il y a %d intersections déjà utilisées\n", *taille);
+
 	int i = 0;
 
 
@@ -365,7 +368,53 @@ bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection** alre
 		}
 	}
 
-	//TODO autre coté
+	// On regarde si l'intersection existe
+	if(inter->interBas) {
+
+		if(inter->interBas->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interBas)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interBas, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
+
+	// On regarde si l'intersection existe
+/*	if(inter->interGauche) {
+
+		if(inter->interGauche->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interGauche)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interGauche, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
+*/	
+	// On regarde si l'intersection existe
+	if(inter->interHaut) {
+
+		if(inter->interHaut->pion->couleur == color){
+
+			// On regarde si on l'a pas déjà utilisé
+			if(!checkAlreadyUse(alreadyUse, sizeUsed, inter->interHaut)){
+
+				if(!liberte) {
+					liberte = checkLiberteAllie(inter->interHaut, color, alreadyUse, sizeUsed, liberte);
+				}
+			}
+
+		}
+	}
 
 	return liberte;
 }

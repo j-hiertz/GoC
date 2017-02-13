@@ -483,8 +483,8 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 			passer = false;
-			draw_pion(inter->x,inter->y,tour);
-
+			//draw_pion(inter->x,inter->y,tour);
+			draw_plateau(width_win(),height_win());
 			if(tour == BLANC) { tour = NOIR; }
 			else { tour = BLANC; }
 			draw_tour_jeu();
