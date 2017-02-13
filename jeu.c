@@ -171,12 +171,10 @@ void draw_tour_jeu() {
 
 // Gere le click sur le bouton passer
 void click_pass() {
-	printf("----- ----- UN JOUEUR A PASSER SON TOUR ----- -----\n");
 	if(passer) {
 		gameFinished = true;
 		calculPoints();
-	}
-	else {
+	} else {
 		passer = true;
 		if(tour == BLANC) { tour = NOIR; }
 		else { tour = BLANC; }
@@ -335,8 +333,14 @@ bool playIA(int ligne, int colonne) {
 	Intersection *inter = goban->intersections[ligne][colonne];
 	int random = rand() % 100;
 	int size = getSizeCaseOccupe();
-	printf("RANDOM GENERE: %d\n", random);
 
+	// Algorithme de gestion du passage de tour :
+	// 50% du plateau remplis -> 3% de chance que l'IA passe son tour
+	// 60% -> 7%
+	// 70% -> 15%
+	// 80% -> 45%
+	// 90% -> 75%
+	// 100% -> 100%
 	if(size > (nbCase*nbCase) * 0.5 && size < (nbCase*nbCase) * 0.6){
 		if(random < 3) { click_pass(); return false; }
 	} else if (size > (nbCase*nbCase) * 0.6 && size < (nbCase*nbCase) * 0.7){
@@ -379,7 +383,7 @@ bool playIA(int ligne, int colonne) {
 }
 
 void whoIsPlaying() {
-	int milisec = 100; // Millisecondes entre chaqu coup joue
+	int milisec = 100; // Millisecondes entre chaque coup joue
 	bool verif = true;
 
 	if(nbCase == 19) {
@@ -582,7 +586,6 @@ void mouse_clicked(int bouton, int x, int y) {
 		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
 
 		if(checkIfPion(goban, ligne, colonne)) {
-			printf("THERE IS A STONE HERE, DELETE IT !!!\n");
 			goban->intersections[ligne][colonne]->pion = NULL;
 			int width = width_win();
 			int height = height_win();
@@ -640,7 +643,7 @@ int main(int argc, char **argv) {
 	courFenetre = 3;
 	tour = NOIR;
 	joueur1 = JOUEUR;
-	joueur2 = IA;
+	joueur2 = JOUEUR;
 	passer = false;
 	deleteMode = false;
 	initialized = false;
@@ -651,7 +654,7 @@ int main(int argc, char **argv) {
 	}
 
 	if(nbCase == 0){
-		nbCase = 19;
+		nbCase = 9;
 	}
 
 	switch(nbCase)

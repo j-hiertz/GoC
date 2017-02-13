@@ -10,9 +10,9 @@ typedef struct Button{
 typedef enum { IA, JOUEUR} typePlayer;
 
 void freeButtons();
-int checkClick(int, int);
 Button* init_button(int, int, int, int, void(*c)());
+void setLabelButton(char*, int, int, int, int, int);
+int checkClick(int, int);
 void draw_menu_load(int, int);
 void draw_goban_size(int, int);
-void setLabelButton(char*, int, int, int, int, int);
 void draw_choix_adversaire(int, int, typePlayer, typePlayer);
