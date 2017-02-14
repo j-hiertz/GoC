@@ -16,7 +16,6 @@ colorPion tour;
 Goban *goban;
 FILE *file;
 Button* pass;
-Button* save;
 Button* delete;
 bool initialized, passer, deleteMode, gameFinished;
 
@@ -198,16 +197,9 @@ void click_menu_game(int x, int y) {
 
 	if(x > pass->x && x < pass->x + pass->w && y > pass->y && y < pass->y + pass->h) {
 		pass->click();
-	} else if (x > save->x && x < save->x + save->w && y > save->y && y < save->y + save->h) {
-		save->click();
 	} else if (x > delete->x && x < delete->x + delete->w && y > delete->y && y < delete->y + delete->h) {
 		delete->click();
 	}
-}
-
-// Gere les clicks bouton sauvegarde
-void click_menu_save() {
-	file = saveGame(goban, file, nbCase);
 }
 
 // Dessine le bouton passer
@@ -248,28 +240,9 @@ void draw_menu_game_delete() {
 	setLabelButton(deleteLbl, del_x, del_y, del_w, del_h, 85);
 }
 
-// Dessine le bouton sauvegarder
-void draw_menu_game_save() {
-	color(1, 1, 1);
-	int save_w = 120;
-	int save_h = save_w / 3;
-	int save_x = espaceCase * nbCase + 50;
-	int save_y = espaceCase * (nbCase / 3);
-	char saveLbl[] = "Sauvegarder";
-
-	filled_rectangle(save_x, save_y, save_w, save_h);
-
-	save = init_button(save_x, save_y, save_w, save_h, &click_menu_save);
-
-	color(0, 0, 0);
-	rectangle(save_x, save_y, save_w, save_h);
-	setLabelButton(saveLbl, save_x, save_y, save_w, save_h, 50);
-}
-
 // Gere l'affichage du menu du jeu
 void draw_init_menu_game(int width, int height) {
 	draw_menu_game_pass();
-	//draw_menu_game_save();
 	draw_menu_game_delete();
 	draw_tour_jeu();
 }
