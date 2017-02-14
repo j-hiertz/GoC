@@ -7,7 +7,7 @@ FILE* saveGame(Goban*, FILE*, int);
 
 void updateSGF(FILE*, int, int, colorPion);
 
-void createGameFromFile(FILE*, Goban*);
+void createGameFromFile(FILE*, Goban*, colorPion*);
 
 void endGameSGF(FILE*, char*);
 

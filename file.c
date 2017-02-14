@@ -97,7 +97,7 @@ void updateSGF(FILE* file, int colonne, int ligne, colorPion color){
 /**
  * Permet de créer une partie en fonction d'un fichier sgf
  */
-void createGameFromFile(FILE* file, Goban *goban) { // /home/jordan/GoC/save/game_2017_02_14_20_51_20.sgf
+void createGameFromFile(FILE* file, Goban *goban, colorPion* tour) { // /home/jordan/GoC/save/game_2017_02_14_20_51_20.sgf
 
 	char * line = NULL;
     size_t len = 0;
@@ -129,11 +129,12 @@ void createGameFromFile(FILE* file, Goban *goban) { // /home/jordan/GoC/save/gam
         i++;
     }
 
-	if(last == BLANC) { setTour(NOIR); }
-	else { setTour(BLANC); }
-
+    *tour = (last == NOIR) ? BLANC : NOIR;
 }
 
+/**
+ * Indique le score de la partie dans le fichier
+ */
 void endGameSGF(FILE* file, char* str){
 
 	if(file == NULL) {
@@ -147,6 +148,9 @@ void endGameSGF(FILE* file, char* str){
 	fclose(file);
 }
 
+/**
+ * Permet de récupérer la taille du plateau pour une partie chargée
+ */
 int getNbCaseFromFile(FILE* file) {
 
 	char * line = NULL;

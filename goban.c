@@ -36,7 +36,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 	intersections = malloc(nbCase * sizeof(*intersections));
 
 	if(intersections == NULL){
-		// TODO Erreur + quitter programme
+		exit(EXIT_FAILURE);
 	}
 
 	for(int ligne = 0; ligne < nbCase; ligne++){
