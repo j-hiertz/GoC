@@ -6,7 +6,6 @@
 #ifndef LIBRARY_H
 	#define LIBRARY_H
 	#include "dessine.h"
-	#include "goban.h"
 	#include "menu.h"
 	#include "file.h"
 #endif
@@ -203,6 +202,11 @@ void click_menu_game(int x, int y) {
 	}
 }
 
+// Gere les clicks bouton sauvegarde
+void click_menu_save() {
+	file = saveGame(goban, file, nbCase);
+}
+
 // Dessine le bouton passer
 void draw_menu_game_pass() {
 	color(1, 1, 1);
@@ -252,7 +256,7 @@ void draw_menu_game_save() {
 
 	filled_rectangle(save_x, save_y, save_w, save_h);
 
-	save = init_button(save_x, save_y, save_w, save_h, &click_pass);
+	save = init_button(save_x, save_y, save_w, save_h, &click_menu_save);
 
 	color(0, 0, 0);
 	rectangle(save_x, save_y, save_w, save_h);
@@ -331,9 +335,9 @@ bool checkBoundsGoban(int x, int y){
 bool playIA(int ligne, int colonne) {
 
 	Intersection *inter = goban->intersections[ligne][colonne];
+
 	int random = rand() % 100;
 	int size = getSizeCaseOccupe();
-
 	// Algorithme de gestion du passage de tour :
 	// 50% du plateau remplis -> 3% de chance que l'IA passe son tour
 	// 60% -> 7%
@@ -342,21 +346,21 @@ bool playIA(int ligne, int colonne) {
 	// 90% -> 75%
 	// 100% -> 100%
 	if(size > (nbCase*nbCase) * 0.5 && size < (nbCase*nbCase) * 0.6){
-		if(random < 3) { click_pass(); return false; }
+		if(random == 1) { click_pass(); return false; }
 	} else if (size > (nbCase*nbCase) * 0.6 && size < (nbCase*nbCase) * 0.7){
-		if(random < 7) { click_pass(); return false; }
+		if(random <= 5) { click_pass(); return false; }
 	} else if (size > (nbCase*nbCase) * 0.7 && size < (nbCase*nbCase) * 0.8) {
-		if(random < 15) { click_pass(); return false; }
+		if(random <= 10) { click_pass(); return false; }
 	} else if (size > (nbCase*nbCase) * 0.8 && size < (nbCase*nbCase) * 0.9) {
-		if(random < 45) { click_pass(); return false; }
+		if(random <= 35) { click_pass(); return false; }
 	} else if (size > (nbCase*nbCase) * 0.9 && size < (nbCase*nbCase)) {
-		if(random < 75) { click_pass(); return false; }
+		if(random <= 80) { click_pass(); return false; }
 	} else if (size == (nbCase*nbCase)) {
 		click_pass();
 		return false;
 	}
 
-	if(placerPion(file, goban, inter, tour, colonne, ligne)) {
+	if(placerPion(goban, inter, tour, colonne, ligne)) {
 
 		printf("Intersection -> pion %p\n", inter->pion);
 		printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
@@ -392,17 +396,16 @@ void whoIsPlaying() {
 	int milisec = 100; // Millisecondes entre chaque coup joue
 	bool verif = true;
 
-	if(nbCase == 19) {
+	/*if(nbCase == 19) {
 		milisec = 150;
 	} else if (nbCase == 13) {
 		milisec = 300;
-	}
+	}*/
 
 	struct timespec req = {0};
 	req.tv_sec = 0;
 	req.tv_nsec = milisec * 1000000L;
 
-	srand(time(NULL));
 	int colonne1 = rand() % nbCase;
 	int ligne1 = rand() % nbCase;
 	int colonne2 = rand() % nbCase;
@@ -441,8 +444,8 @@ void refresh_manager(int width, int height)
 		draw_choix_adversaire(width, height, joueur1, joueur2);
 	} else if (courFenetre == 3) {
 		initPlateau(goban, width, height, nbCase);
-		file = createSGF(nbCase);
 		draw_plateau(width, height);
+		file = saveGame(goban, file, nbCase);
 		initialized = true;
 		whoIsPlaying();
 	} else if (courFenetre == 4) {
@@ -574,10 +577,13 @@ void mouse_clicked(int bouton, int x, int y) {
 		Intersection *inter = goban->intersections[ligne][colonne];
 
 		// Routine de vérification de placement de pion
-		if(placerPion(file, goban, inter, tour, colonne, ligne)) {
+		if(placerPion(goban, inter, tour, colonne, ligne)) {
 
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+			
+			updateSGF(file, colonne, ligne, tour);
+
 			passer = false;
 			//draw_pion(inter->x,inter->y,tour);
 			draw_plateau(width_win(),height_win());
@@ -646,14 +652,16 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 int main(int argc, char **argv) {
 
 	int width, height;
-	courFenetre = 3;
+
+	courFenetre = 0;
 	tour = NOIR;
-	joueur1 = IA;
-	joueur2 = IA;
+	joueur1 = JOUEUR;
+	joueur2 = JOUEUR;
 	passer = false;
 	deleteMode = false;
 	initialized = false;
 	gameFinished = false;
+	srand(time(NULL));
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);
