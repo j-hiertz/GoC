@@ -112,7 +112,7 @@ void createGameFromFile(FILE* file, Goban *goban, colorPion* tour) {
         	Intersection* intersection = goban->intersections[ligne][colonne];
 
         	last = (line[0] == 'B') ? NOIR : BLANC;
-        	intersection->pion = initPion(last, true);
+        	intersection->pion = initPion(last);
 
         }
         i++;

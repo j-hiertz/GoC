@@ -1,10 +1,14 @@
-#include "dessine.h"
-#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "intersection.h"
 
 Pion *initPion(colorPion couleur) {
 
 	Pion *pion = malloc(sizeof(*pion));
+
+	if(pion == NULL) {
+		exit(EXIT_FAILURE);
+	}
 
 	pion->couleur = couleur;
 
