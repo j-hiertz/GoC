@@ -97,10 +97,10 @@ bool placerPion(Goban* goban, Intersection* intersection, colorPion tour, int co
 		return false;
 	}
 
-	
+
 	// On place le pion avant de vérifier, on supprimera par la suite si nécessaire
 
-	intersection->pion = initPion(tour, true);
+	intersection->pion = initPion(tour);
 
 	// Vérifie qu'on puisse poser un pion ici
 	if(checkPosePion(goban, intersection, tour)){
@@ -126,7 +126,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	bool liberte = false;
 
 	// Etape 2 : On regarde si le pion a AU MOINS UNE liberté direct
-	if(checkLiberte(intersection)) { 
+	if(checkLiberte(intersection)) {
 		liberte = true;
 	}
 
@@ -143,7 +143,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interDroite, intersection->interDroite->pion->couleur, &alreadyUse, &sizeUsed, true)) {
-			
+
 			supprimerChaine(&alreadyUse, &sizeUsed);
 			liberte = true;
 		}
@@ -159,7 +159,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interBas, intersection->interBas->pion->couleur, &alreadyUse, &sizeUsed, true)) {
-			
+
 			supprimerChaine(&alreadyUse, &sizeUsed);
 			liberte = true;
 		}
@@ -175,7 +175,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interGauche, intersection->interGauche->pion->couleur, &alreadyUse, &sizeUsed, true)) {
-			
+
 			supprimerChaine(&alreadyUse, &sizeUsed);
 			liberte = true;
 		}
@@ -191,7 +191,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 		printf("Taille Already Use = 1 ? : %d\n", sizeUsed);
 		if(checkPriseChaine(intersection->interHaut, intersection->interHaut->pion->couleur, &alreadyUse, &sizeUsed, true)) {
-			
+
 			supprimerChaine(&alreadyUse, &sizeUsed);
 			liberte = true;
 		}
@@ -278,7 +278,7 @@ void reAllocAlreadyUse(Intersection*** alreadyUse, int* taille) {
 	if(temp == NULL) {
 		printf("ERREUR WHEN REALLOC MEMORY\n");
 	}
-	
+
 	alreadyUse[0] = temp;
 	*taille = 1;
 }
@@ -390,7 +390,7 @@ bool checkAlreadyUse(Intersection*** intersections, int *taille, Intersection* i
 	if(temp == NULL) {
 		printf("ERREUR WHEN REALLOC MEMORY\n");
 	}
-	
+
 	intersections[0] = temp;
 
 	intersections[0][( *taille)++] = inter;
@@ -461,7 +461,7 @@ bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection*** alr
 
 		}
 	}
-	
+
 	// On regarde si l'intersection existe
 	if(inter->interHaut) {
 

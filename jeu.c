@@ -290,7 +290,7 @@ void draw_plateau(int width, int height)
 
 			Intersection* inter = goban->intersections[ligne][colonne];
 
-			if(inter->pion && inter->pion->visible) {
+			if(inter->pion) {
 				printf("Ya un pion à redessiner en %d %d", ligne, colonne);
 					draw_pion(inter->x, inter->y, inter->pion->couleur);
 			}
@@ -333,7 +333,7 @@ bool playIA(int ligne, int colonne) {
 	if(placerPion(goban, inter, tour, colonne, ligne)) {
 
 		printf("Intersection -> pion %p\n", inter->pion);
-		printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+		printf("Pion dessiné de couleur : %d\n", inter->pion->couleur);
 		passer = false;
 		draw_pion(inter->x,inter->y,tour);
 
@@ -582,7 +582,7 @@ void mouse_clicked(int bouton, int x, int y) {
 		if(placerPion(goban, inter, tour, colonne, ligne)) {
 
 			printf("Intersection -> pion %p\n", inter->pion);
-			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+			printf("Pion dessiné de couleur : %d\n", inter->pion->couleur);
 
 			updateSGF(file, colonne, ligne, tour);
 

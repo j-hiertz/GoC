@@ -12,4 +12,4 @@ struct Pion{
 	bool visible;
 };
 
-Pion *initPion(colorPion, bool);
+Pion *initPion(colorPion);
