@@ -89,7 +89,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 }
 
-bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion tour, int colonne, int ligne){
+bool placerPion(Goban* goban, Intersection* intersection, colorPion tour, int colonne, int ligne){
 
 	// Etape 1 : On vérifie que la case est libre
 	if(intersection->pion) {
@@ -97,19 +97,15 @@ bool placerPion(FILE* file, Goban* goban, Intersection* intersection, colorPion 
 		return false;
 	}
 
-	//char coupStr[6];
 	
 	// On place le pion avant de vérifier, on supprimera par la suite si nécessaire
 
 	intersection->pion = initPion(tour, true);
-	//positionToChar(coupStr, colonne, ligne, 'B');
 
 	// Vérifie qu'on puisse poser un pion ici
 	if(checkPosePion(goban, intersection, tour)){
 
-		printf("Place pion case : %d:%d\n",ligne,colonne);
-
-		//updateSGF(file, coupStr);
+		printf("Place un pion sur la case : %d:%d\n",ligne,colonne);
 
 		sizeCaseOccuppe++;
 		return true;
@@ -203,7 +199,7 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	}
 
 	reAllocAlreadyUse(&alreadyUse, &sizeUsed);
-/*
+
 	// Etape 4 : Si on a toujours aucune liberté, on regarde si on gagne une liberté avec une chaine allié
 	if(!liberte) {
 		// Chaine de droite
@@ -211,13 +207,57 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 			alreadyUse[0] = intersection->interDroite;
 
-			if(checkLiberteAllie(intersection->interDroite, intersection->interDroite->pion->couleur, alreadyUse, &sizeUsed, false)) {
+			if(checkLiberteAllie(intersection->interDroite, intersection->interDroite->pion->couleur, &alreadyUse, &sizeUsed, false)) {
 				return true;
 			}
 
 		}
 	}
-*/
+
+	reAllocAlreadyUse(&alreadyUse, &sizeUsed);
+
+	if(!liberte) {
+		// Chaine du bas
+		if(intersection->interBas && intersection->interBas->pion && intersection->interBas->pion->couleur == tour) {
+
+			alreadyUse[0] = intersection->interBas;
+
+			if(checkLiberteAllie(intersection->interBas, intersection->interBas->pion->couleur, &alreadyUse, &sizeUsed, false)) {
+				return true;
+			}
+
+		}
+	}
+
+	reAllocAlreadyUse(&alreadyUse, &sizeUsed);
+
+	if(!liberte) {
+		// Chaine du bas
+		if(intersection->interGauche && intersection->interGauche->pion && intersection->interGauche->pion->couleur == tour) {
+
+			alreadyUse[0] = intersection->interGauche;
+
+			if(checkLiberteAllie(intersection->interGauche, intersection->interGauche->pion->couleur, &alreadyUse, &sizeUsed, false)) {
+				return true;
+			}
+
+		}
+	}
+
+	reAllocAlreadyUse(&alreadyUse, &sizeUsed);
+
+	if(!liberte) {
+		// Chaine du bas
+		if(intersection->interHaut && intersection->interHaut->pion && intersection->interHaut->pion->couleur == tour) {
+
+			alreadyUse[0] = intersection->interHaut;
+
+			if(checkLiberteAllie(intersection->interHaut, intersection->interHaut->pion->couleur, &alreadyUse, &sizeUsed, false)) {
+				return true;
+			}
+
+		}
+	}
 
 
 	return liberte;
@@ -407,7 +447,7 @@ bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection*** alr
 	}
 
 	// On regarde si l'intersection existe
-/*	if(inter->interGauche) {
+	if(inter->interGauche) {
 
 		if(inter->interGauche->pion->couleur == color){
 
@@ -421,7 +461,7 @@ bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection*** alr
 
 		}
 	}
-*/	
+	
 	// On regarde si l'intersection existe
 	if(inter->interHaut) {
 
@@ -439,47 +479,4 @@ bool checkLiberteAllie(Intersection *inter, colorPion color, Intersection*** alr
 	}
 
 	return liberte;
-}
-
-
-
-// /home/jordan/GoC/save/game_2017_02_08_18_20_02.sgf
-void createGameFromFile(FILE* file, Goban *goban) {
-
-	char * line = NULL;
-    size_t len = 0;
-    ssize_t read;
-
-    int i = 0;
-
-    int ligne;
-    int colonne;
-
-    fseek(file, 0, SEEK_SET);
-		colorPion last;
-    while ((read = getline(&line, &len, file)) != -1) {
-
-        if(i > 1) {
-        	printf("Couleur : %c Colonne : %c Ligne : %c\n", line[0], line[2], line[3]);
-
-        	colonne = charToPosition(line[2]);
-        	ligne = charToPosition(line[3]);
-
-        	Intersection* intersection = goban->intersections[ligne][colonne];
-
-        	if(line[0] == 'B') {
-        		intersection->pion = initPion(NOIR, true);
-						last = NOIR;
-        	}
-        	else {
-        		intersection->pion = initPion(BLANC, true);
-						last = BLANC;
-        	}
-					sizeCaseOccuppe++;
-        }
-        i++;
-    }
-
-		if(last == BLANC) { setTour(NOIR); }
-		else { setTour(BLANC); }
 }

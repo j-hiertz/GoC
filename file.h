@@ -1,9 +1,13 @@
-#include <stdlib.h>
-#include <stdio.h>
+#ifndef GOBAN_H
+	#define GOBAN_H
+	#include "goban.h"
+#endif
 
-FILE *createSGF(int);
+FILE* saveGame(Goban*, FILE*, int);
 
-void updateSGF(FILE*, char*);
+void updateSGF(FILE*, int, int, colorPion);
+
+void createGameFromFile(FILE*, Goban*);
 
 void endGameSGF(FILE*, char*);
 
