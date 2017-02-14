@@ -364,6 +364,7 @@ void reinitDefaultValues() {
 	gameFinished = false;
 	pointsJoueur1 = 0;
 	pointsJoueur2 = 0;
+	freeButtons();
 }
 
 void backToMenu() {
@@ -477,12 +478,13 @@ void mouse_clicked(int bouton, int x, int y) {
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
 
 	if(gameFinished) {
-		printf("OMG UN CLICK !!!\n");
 		checkClick(x, y);
+		return;
+	} else if (((tour == NOIR && joueur1 == IA) || (tour == BLANC && joueur2 == IA)) && initialized) {
 		return;
 	}
 
-	// Menu purpose
+	// Bloque la pose d'un pion quand on arrive sur le goban
 	bool verif = true;
 	if(courFenetre < 3) {
 		checkClick(x, y);
@@ -491,11 +493,6 @@ void mouse_clicked(int bouton, int x, int y) {
 
 	if(courFenetre > 2) {
 		checkClick(x, y);
-	}
-
-	if((tour == NOIR && joueur1 == IA) || (tour == BLANC && joueur2 == IA)) {
-		printf("Laisse le temp à l'IA de jouer petit batard !\n");
-		return;
 	}
 
 	if(checkBoundsGoban(x, y) && verif && !deleteMode && !gameFinished) {
@@ -514,7 +511,6 @@ void mouse_clicked(int bouton, int x, int y) {
 			updateSGF(file, colonne, ligne, tour);
 
 			passer = false;
-			//draw_pion(inter->x,inter->y,tour);
 			draw_plateau(width_win(),height_win());
 			if(tour == BLANC) { tour = NOIR; }
 			else { tour = BLANC; }
