@@ -12,6 +12,8 @@ extern void choixJoueur2();
 extern void validationAdversaire();
 extern void backToMenu();
 extern void rejouerGame();
+extern void click_pass();
+extern void click_deleteMode();
 
 Button** arrayButton = NULL;
 int sizeArray = 0;
@@ -243,4 +245,57 @@ void draw_score_final(int pointsJ1, int pointsJ2, int width, int height) {
 	string(box_x + 25, box_y + 110, joueur2);
 	setLabelButton(menu, btn1_x, btn1_y, btn1_w, btn1_h, 25);
 	setLabelButton(rejouer, btn2_x, btn1_y, btn1_w, btn1_h, 40);
+}
+
+// Dessine les tours de jeu
+void draw_tour_jeu(int espaceCase, int nbCase, colorPion tour) {
+	color(0, 0, 0);
+	char tourLbl[] = "Prochaine pierre";
+	int width = width_win();
+	int height = height_win();
+
+	string(espaceCase * nbCase + 65, espaceCase + (espaceCase / 2), tourLbl);
+	draw_pion(espaceCase * nbCase + 110, espaceCase * 2 + (espaceCase / 4), tour);
+}
+
+// Dessine le bouton passer
+void draw_menu_game_pass(int espaceCase, int nbCase) {
+	color(1, 1, 1);
+	int pass_w = 120;
+	int pass_h = pass_w / 2;
+	int pass_x = espaceCase * nbCase + 50;
+	int pass_y = espaceCase * (nbCase / 3) + 60;
+	char passerLbl[] = "Passer";
+
+	filled_rectangle(pass_x, pass_y, pass_w, pass_h);
+	Button* pass = init_button(pass_x, pass_y, pass_w, pass_h, &click_pass);
+	arrayButton = malloc(sizeof(Button) * 2);
+	arrayButton[0] = pass;
+	sizeArray = 1;
+
+	color(0, 0, 0);
+	rectangle(pass_x, pass_y, pass_w, pass_h);
+	setLabelButton(passerLbl, pass_x, pass_y, pass_w, pass_h, 30);
+}
+
+// Dessine le bouton delete
+void draw_menu_game_delete(int espaceCase, int nbCase, bool deleteMode) {
+	color(1, 1, 1);
+	int del_w = 120;
+	int del_h = del_w / 3;
+	int del_x = espaceCase * nbCase + 50;
+	int del_y = espaceCase * (nbCase / 3) + 140;
+	char *deleteLbl = malloc(sizeof(char)*16);
+	if(deleteMode) { deleteLbl = "Delete Mode: On "; }
+	else { deleteLbl = "Delete Mode: Off"; }
+
+	filled_rectangle(del_x, del_y, del_w, del_h);
+
+	Button* delete = init_button(del_x, del_y, del_w, del_h, &click_deleteMode);
+	arrayButton[1] = delete;
+	sizeArray = 2;
+
+	color(0, 0, 0);
+	rectangle(del_x, del_y, del_w, del_h);
+	setLabelButton(deleteLbl, del_x, del_y, del_w, del_h, 85);
 }
