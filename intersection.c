@@ -1,13 +1,15 @@
-#include "dessine.h"
-#include <string.h>
-#ifndef INTERSECTION_H
-	#define INTERSECTION_H
-	#include "intersection.h"
-#endif
+#include <stdlib.h>
+#include <stdio.h>
+#include "intersection.h"
 
 Intersection* initIntersection(int x, int y) {
 
 	Intersection *inter = malloc(sizeof(*inter));
+
+	if(inter == NULL) {
+		exit(EXIT_FAILURE);
+	}
+	
 	inter->x = x;
 	inter->y = y;
 	inter->pion = NULL;

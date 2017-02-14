@@ -7,8 +7,6 @@
 	#include "dessine.h"
 #endif
 
-extern void setTour(colorPion p);
-
 int sizeCaseOccuppe;
 
 int getSizeCaseOccupe() {

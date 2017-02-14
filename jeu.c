@@ -19,10 +19,6 @@ Button* pass;
 Button* delete;
 bool initialized, passer, deleteMode, gameFinished;
 
-void setTour(colorPion p) {
-	tour = p;
-}
-
 bool getInitialized() {
 	return initialized;
 }
@@ -418,7 +414,11 @@ void refresh_manager(int width, int height)
 	} else if (courFenetre == 3) {
 		initPlateau(goban, width, height, nbCase);
 		draw_plateau(width, height);
-		file = saveGame(goban, file, nbCase);
+
+		if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
+			file = saveGame(goban, file);
+		}
+		
 		initialized = true;
 		whoIsPlaying();
 	} else if (courFenetre == 4) {
@@ -478,7 +478,7 @@ void loadParty() {
 		nbCase = getNbCaseFromFile(file);
 		initPlateau(goban, width_win(), height_win(), nbCase);
 
-		createGameFromFile(file, goban);
+		createGameFromFile(file, goban, &tour);
 		courFenetre = 4;
 		int w = width_win();
 		int h = height_win();
@@ -584,8 +584,10 @@ void mouse_clicked(int bouton, int x, int y) {
 			printf("Intersection -> pion %p\n", inter->pion);
 			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
 
-			updateSGF(file, colonne, ligne, tour);
-
+			if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
+				updateSGF(file, colonne, ligne, tour);
+			}
+			
 			passer = false;
 			//draw_pion(inter->x,inter->y,tour);
 			draw_plateau(width_win(),height_win());

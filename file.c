@@ -20,12 +20,7 @@
 // B[dp]; Noir joue sur le case dp => 4:16 (0:13 dans le tableau)
 // W[ic]; Blanc joue sur le case ic => 9:3 (8:2 dans le tableau)
 
-/**
- * On sauvegarde le fichier de la partie si celui-ci n'est pas encore initialisé
- * On créé le repertoire save si il n'existe pas encore
- */
-
-FILE* saveGame(Goban* goban, FILE* file, int nbCase){
+FILE* saveGame(Goban* goban, FILE* file){
 	
 	printf("\n===== Sauvegarde de la partie =====\n");
 
@@ -52,7 +47,7 @@ FILE* saveGame(Goban* goban, FILE* file, int nbCase){
 
 		strftime(date, 20, "%Y-%m-%d", localtime(&t));
 
-		fprintf(file, "(;RE[W+R]FF[4]GM[1]SZ[%d]US[Mohamed Azzouz & Jordan Hiertz]GN[Go Go MoMo Game Desu]\n", nbCase);
+		fprintf(file, "(;RE[W+R]FF[4]GM[1]SZ[%d]US[Mohamed Azzouz & Jordan Hiertz]GN[Go Go MoMo Game Desu]\n", goban->nbCase);
 		fprintf(file, "PW[Joueur Blanc]PB[Joueur Noir]PC[CFAI Eckbolsheim]DT[%s]KM[0.5];)", date);
 
 		printf("Fichier correctement créé\n");
@@ -61,9 +56,6 @@ FILE* saveGame(Goban* goban, FILE* file, int nbCase){
 	return file;
 }
 
-/**
- * Ajout d'un coup dans le fichier
- */
 void updateSGF(FILE* file, int colonne, int ligne, colorPion color){
 
 	if(file == NULL) {
@@ -93,11 +85,8 @@ void updateSGF(FILE* file, int colonne, int ligne, colorPion color){
 	fputs(")", file);
 }
 
-
-/**
- * Permet de créer une partie en fonction d'un fichier sgf
- */
-void createGameFromFile(FILE* file, Goban *goban, colorPion* tour) { // /home/jordan/GoC/save/game_2017_02_14_20_51_20.sgf
+// /home/jordan/GoC/save/game_2017_02_14_23_39_00.sgf
+void createGameFromFile(FILE* file, Goban *goban, colorPion* tour) {
 
 	char * line = NULL;
     size_t len = 0;
@@ -132,9 +121,6 @@ void createGameFromFile(FILE* file, Goban *goban, colorPion* tour) { // /home/jo
     *tour = (last == NOIR) ? BLANC : NOIR;
 }
 
-/**
- * Indique le score de la partie dans le fichier
- */
 void endGameSGF(FILE* file, char* str){
 
 	if(file == NULL) {
@@ -148,9 +134,6 @@ void endGameSGF(FILE* file, char* str){
 	fclose(file);
 }
 
-/**
- * Permet de récupérer la taille du plateau pour une partie chargée
- */
 int getNbCaseFromFile(FILE* file) {
 
 	char * line = NULL;

@@ -3,8 +3,8 @@
 	#include "dessine.h"
 	#include "goban.h"
 	#include "menu.h"
-	#include "file.h"
 #endif
+
 #include <string.h>
 
 
