@@ -10,6 +10,8 @@ extern void setGoban9();
 extern void choixJoueur1();
 extern void choixJoueur2();
 extern void validationAdversaire();
+extern void backToMenu();
+extern void rejouerGame();
 
 Button** arrayButton = NULL;
 int sizeArray = 0;
@@ -193,4 +195,52 @@ void draw_choix_adversaire(int width, int height, typePlayer selectedPlayer1, ty
 	string(lbl_joueur2_x, lbl_joueur1_y, second_player);
 	line(width / 2, 0, width / 2, btn3_y);
 	line(width / 2, btn3_y + btn3_h, width / 2, height);
+}
+
+void draw_score_final(int pointsJ1, int pointsJ2, int width, int height) {
+	int box_w = 300;
+	int box_h = 3*(box_w / 4);
+	int box_x = (width / 2) - (box_w / 2);
+	int box_y = (height / 2) - (box_h / 2);
+
+	int btn1_w = 100;
+	int btn1_h = 60;
+	int btn1_x = box_x + 33;
+	int btn1_y = box_y + box_h - 80;
+
+	char menu[] = "Menu";
+	char rejouer[] = "Rejouer";
+	char recap[] = "RECAPITULATIF SCORES";
+	char joueur1[22];
+	char joueur2[22];
+	sprintf(joueur1, "Joueur 1 : %d points", pointsJ1);
+	sprintf(joueur2, "Joueur 2 : %d points", pointsJ2);
+
+	int btn2_x = btn1_x + btn1_w + 33;
+
+	freeButtons();
+	Button* btn1 = init_button(btn1_x, btn1_y, btn1_w, btn1_h, &backToMenu);
+	Button* btn2 = init_button(btn2_x, btn1_y, btn1_w, btn1_h, &rejouerGame);
+	arrayButton = malloc(sizeof(Button) * 2);
+	arrayButton[0] = btn1;
+	arrayButton[1] = btn2;
+	sizeArray = 2;
+
+	color(0.988,0.807,0.611);
+	filled_rectangle(box_x, box_y, box_w, box_h);
+
+	color(1,1,1);
+	filled_rectangle(btn1_x, btn1_y, btn1_w, btn1_h);
+	filled_rectangle(btn2_x, btn1_y, btn1_w, btn1_h);
+
+	color(0,0,0);
+	rectangle(box_x, box_y, box_w, box_h);
+	rectangle(btn1_x, btn1_y, btn1_w, btn1_h);
+	rectangle(btn2_x, btn1_y, btn1_w, btn1_h);
+
+	string(box_x + box_w / 2 - 60, box_y + 25, recap);
+	string(box_x + 25, box_y + 80, joueur1);
+	string(box_x + 25, box_y + 110, joueur2);
+	setLabelButton(menu, btn1_x, btn1_y, btn1_w, btn1_h, 25);
+	setLabelButton(rejouer, btn2_x, btn1_y, btn1_w, btn1_h, 40);
 }

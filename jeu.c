@@ -11,7 +11,7 @@
 	#include "file.h"
 #endif
 
-int nbCase, espaceCase, courFenetre;
+int nbCase, espaceCase, courFenetre, pointsJoueur1, pointsJoueur2;
 typePlayer joueur1, joueur2;
 colorPion tour;
 Goban *goban;
@@ -77,7 +77,7 @@ bool calculTerritoire(Intersection* inter, colorPion *couleur, bool verif, int *
 void calculPoints() {
 	printf("Attention parce que là ya de l'ago qui va sortir\n");
 	colorPion couleur = UNDEFINED;
-	int count, pointsJoueur1, pointsJoueur2 = 0;
+	int count = 0;
 	bool verif = true;
 
 	for(int i = 0; i < nbCase; i++) {
@@ -102,12 +102,15 @@ void calculPoints() {
 					pointsJoueur2++;
 				}
 			}
+      printf("Le joueur 1 est à %d points\n", pointsJoueur1);
+      printf("Le joueur 2 est à %d points\n", pointsJoueur2);
 		}
 	}
 
 	printf("RECAPITULATIF : \n");
 	printf("JOUEUR 1: %d points\n", pointsJoueur1);
 	printf("JOUEUR 2: %d points\n", pointsJoueur2);
+  draw_score_final(pointsJoueur1, pointsJoueur2, width_win(), height_win());
 }
 
 // Dessine un pion
@@ -262,7 +265,7 @@ void draw_menu_game_save() {
 // Gere l'affichage du menu du jeu
 void draw_init_menu_game(int width, int height) {
 	draw_menu_game_pass();
-	draw_menu_game_save();
+	//draw_menu_game_save();
 	draw_menu_game_delete();
 	draw_tour_jeu();
 }
@@ -334,13 +337,7 @@ bool playIA(int ligne, int colonne) {
 	int random = rand() % 100;
 	int size = getSizeCaseOccupe();
 
-	// Algorithme de gestion du passage de tour :
-	// 50% du plateau remplis -> 3% de chance que l'IA passe son tour
-	// 60% -> 7%
-	// 70% -> 15%
-	// 80% -> 45%
-	// 90% -> 75%
-	// 100% -> 100%
+	// Algorithme de gestion du passage de tour
 	if(size > (nbCase*nbCase) * 0.5 && size < (nbCase*nbCase) * 0.6){
 		if(random < 3) { click_pass(); return false; }
 	} else if (size > (nbCase*nbCase) * 0.6 && size < (nbCase*nbCase) * 0.7){
@@ -389,7 +386,7 @@ bool playIA(int ligne, int colonne) {
 }
 
 void whoIsPlaying() {
-	int milisec = 100; // Millisecondes entre chaque coup joue
+	int milisec = 10; // Millisecondes entre chaque coup joue
 	bool verif = true;
 
 	if(nbCase == 19) {
@@ -426,6 +423,9 @@ void whoIsPlaying() {
 void refresh_plateau(int width, int height) {
 	clear_win();
 	draw_plateau(width, height);
+	if(gameFinished) {
+		draw_score_final(pointsJoueur1, pointsJoueur2, width, height);
+	}
 }
 
 // Manage changing window
@@ -450,6 +450,29 @@ void refresh_manager(int width, int height)
 		initialized = true;
 		whoIsPlaying();
 	}
+}
+
+void reinitDefaultValues() {
+	initialized = false;
+	gameFinished = false;
+	pointsJoueur1 = 0;
+	pointsJoueur2 = 0;
+}
+
+void backToMenu() {
+	courFenetre = 0;
+	reinitDefaultValues();
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
+}
+
+void rejouerGame() {
+	courFenetre = 3;
+	reinitDefaultValues();
+	int w = width_win();
+	int h = height_win();
+	refresh_manager(w, h);
 }
 
 void newParty() {
@@ -546,11 +569,17 @@ void mouse_clicked(int bouton, int x, int y) {
 
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
 
+	if(gameFinished) {
+		printf("OMG UN CLICK !!!\n");
+		checkClick(x, y);
+		return;
+	}
+
 	// Menu purpose
-	bool verif = false;
+	bool verif = true;
 	if(courFenetre < 3) {
 		checkClick(x, y);
-		verif = true;
+		verif = false;
 	}
 
 	if(courFenetre > 2) {
@@ -566,7 +595,7 @@ void mouse_clicked(int bouton, int x, int y) {
 		return;
 	}
 
-	if(checkBoundsGoban(x, y) && !verif && !deleteMode) {
+	if(checkBoundsGoban(x, y) && verif && !deleteMode && !gameFinished) {
 		// On défini la case la plus proche du click
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
 		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
@@ -654,6 +683,8 @@ int main(int argc, char **argv) {
 	deleteMode = false;
 	initialized = false;
 	gameFinished = false;
+	pointsJoueur1 = 0;
+	pointsJoueur1 = 0;
 
 	if(argc >= 2) {
 		sscanf(argv[1],"%d",&nbCase);

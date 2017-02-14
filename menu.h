@@ -16,3 +16,4 @@ int checkClick(int, int);
 void draw_menu_load(int, int);
 void draw_goban_size(int, int);
 void draw_choix_adversaire(int, int, typePlayer, typePlayer);
+void draw_score_final(int, int, int, int);
