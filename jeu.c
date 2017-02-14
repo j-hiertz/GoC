@@ -69,7 +69,6 @@ bool calculTerritoire(Intersection* inter, colorPion *couleur, bool verif, int *
 
 // Recupere les territoires possede et les additionnes au score du joueur
 void calculPoints() {
-	printf("Attention parce que là ya de l'ago qui va sortir\n");
 	colorPion couleur = UNDEFINED;
 	int count = 0;
 	bool verif = true;
@@ -100,10 +99,6 @@ void calculPoints() {
       printf("Le joueur 2 est à %d points\n", pointsJoueur2);
 		}
 	}
-
-	printf("RECAPITULATIF : \n");
-	printf("JOUEUR 1: %d points\n", pointsJoueur1);
-	printf("JOUEUR 2: %d points\n", pointsJoueur2);
   draw_score_final(pointsJoueur1, pointsJoueur2, width_win(), height_win());
 }
 
@@ -155,17 +150,6 @@ void draw_hoshi(int width, int height){
 	}
 }
 
-// Dessine les tours de jeu
-void draw_tour_jeu() {
-	color(0, 0, 0);
-	char tourLbl[] = "Prochaine pierre";
-	int width = width_win();
-	int height = height_win();
-
-	string(espaceCase * nbCase + 65, espaceCase + (espaceCase / 2), tourLbl);
-	draw_pion(espaceCase * nbCase + 110, espaceCase * 2 + (espaceCase / 4), tour);
-}
-
 // Gere le click sur le bouton passer
 void click_pass() {
 	if(passer) {
@@ -175,7 +159,7 @@ void click_pass() {
 		passer = true;
 		if(tour == BLANC) { tour = NOIR; }
 		else { tour = BLANC; }
-		draw_tour_jeu();
+		draw_tour_jeu(espaceCase, nbCase, tour);
 		whoIsPlaying();
 	}
 }
@@ -185,62 +169,15 @@ void click_deleteMode() {
 	if(deleteMode) { deleteMode = false; }
 	else {deleteMode = true; }
 	//draw_plateau();
-	draw_menu_game_delete();
-}
-
-// Gere les clicks a l'exterieur du goban
-void click_menu_game(int x, int y) {
-
-	if(x > pass->x && x < pass->x + pass->w && y > pass->y && y < pass->y + pass->h) {
-		pass->click();
-	} else if (x > delete->x && x < delete->x + delete->w && y > delete->y && y < delete->y + delete->h) {
-		delete->click();
-	}
-}
-
-// Dessine le bouton passer
-void draw_menu_game_pass() {
-	color(1, 1, 1);
-	int pass_w = 120;
-	int pass_h = pass_w / 2;
-	int pass_x = espaceCase * nbCase + 50;
-	int pass_y = espaceCase * (nbCase / 3) + 60;
-	char passerLbl[] = "Passer";
-
-	filled_rectangle(pass_x, pass_y, pass_w, pass_h);
-
-	pass = init_button(pass_x, pass_y, pass_w, pass_h, &click_pass);
-
-	color(0, 0, 0);
-	rectangle(pass_x, pass_y, pass_w, pass_h);
-	setLabelButton(passerLbl, pass_x, pass_y, pass_w, pass_h, 30);
-}
-
-// Dessine le bouton delete
-void draw_menu_game_delete() {
-	color(1, 1, 1);
-	int del_w = 120;
-	int del_h = del_w / 3;
-	int del_x = espaceCase * nbCase + 50;
-	int del_y = espaceCase * (nbCase / 3) + 140;
-	char *deleteLbl = malloc(sizeof(char)*16);
-	if(deleteMode) { deleteLbl = "Delete Mode: On "; }
-	else { deleteLbl = "Delete Mode: Off"; }
-
-	filled_rectangle(del_x, del_y, del_w, del_h);
-
-	delete = init_button(del_x, del_y, del_w, del_h, &click_deleteMode);
-
-	color(0, 0, 0);
-	rectangle(del_x, del_y, del_w, del_h);
-	setLabelButton(deleteLbl, del_x, del_y, del_w, del_h, 85);
+	draw_menu_game_delete(espaceCase, nbCase, deleteMode);
 }
 
 // Gere l'affichage du menu du jeu
 void draw_init_menu_game(int width, int height) {
-	draw_menu_game_pass();
-	draw_menu_game_delete();
-	draw_tour_jeu();
+	freeButtons();
+	draw_menu_game_pass(espaceCase, nbCase);
+	draw_menu_game_delete(espaceCase, nbCase, deleteMode);
+	draw_tour_jeu(espaceCase, nbCase, tour);
 }
 
 // Dessine le plateau
@@ -286,7 +223,7 @@ void draw_plateau(int width, int height)
 
 			Intersection* inter = goban->intersections[ligne][colonne];
 
-			if(inter->pion && inter->pion->visible) {
+			if(inter->pion) {
 				printf("Ya un pion à redessiner en %d %d", ligne, colonne);
 					draw_pion(inter->x, inter->y, inter->pion->couleur);
 			}
@@ -329,13 +266,13 @@ bool playIA(int ligne, int colonne) {
 	if(placerPion(goban, inter, tour, colonne, ligne)) {
 
 		printf("Intersection -> pion %p\n", inter->pion);
-		printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+		printf("Pion dessiné de couleur : %d\n", inter->pion->couleur);
 		passer = false;
 		draw_pion(inter->x,inter->y,tour);
 
 		if(tour == BLANC) { tour = NOIR; }
 		else { tour = BLANC; }
-		draw_tour_jeu();
+		draw_tour_jeu(espaceCase, nbCase, tour);
 
 		printf("La couleur de la case est %d\n", goban->intersections[ligne][colonne]->pion->couleur);
 		return true;
@@ -361,12 +298,6 @@ bool playIA(int ligne, int colonne) {
 void whoIsPlaying() {
 	int milisec = 10; // Millisecondes entre chaque coup joue
 	bool verif = true;
-
-	/*if(nbCase == 19) {
-		milisec = 150;
-	} else if (nbCase == 13) {
-		milisec = 300;
-	}*/
 
 	struct timespec req = {0};
 	req.tv_sec = 0;
@@ -433,6 +364,7 @@ void reinitDefaultValues() {
 	gameFinished = false;
 	pointsJoueur1 = 0;
 	pointsJoueur2 = 0;
+	freeButtons();
 }
 
 void backToMenu() {
@@ -546,12 +478,13 @@ void mouse_clicked(int bouton, int x, int y) {
 	printf("\nBouton %d presse au coord. %d,%d \n",bouton,x,y);
 
 	if(gameFinished) {
-		printf("OMG UN CLICK !!!\n");
 		checkClick(x, y);
+		return;
+	} else if (((tour == NOIR && joueur1 == IA) || (tour == BLANC && joueur2 == IA)) && initialized) {
 		return;
 	}
 
-	// Menu purpose
+	// Bloque la pose d'un pion quand on arrive sur le goban
 	bool verif = true;
 	if(courFenetre < 3) {
 		checkClick(x, y);
@@ -559,16 +492,7 @@ void mouse_clicked(int bouton, int x, int y) {
 	}
 
 	if(courFenetre > 2) {
-		click_menu_game(x, y);
-	}
-
-	if(tour == NOIR && joueur1 == IA) {
-		printf("Laisse le temp à l'IA de jouer petit batard !\n");
-		return;
-	}
-	if(tour == BLANC && joueur2 == IA) {
-		printf("Laisse le temp à l'IA de jouer petit batard !\n");
-		return;
+		checkClick(x, y);
 	}
 
 	if(checkBoundsGoban(x, y) && verif && !deleteMode && !gameFinished) {
@@ -582,18 +506,17 @@ void mouse_clicked(int bouton, int x, int y) {
 		if(placerPion(goban, inter, tour, colonne, ligne)) {
 
 			printf("Intersection -> pion %p\n", inter->pion);
-			printf("Pion dessiné de couleur : %d visible : %d\n", inter->pion->couleur, inter->pion->visible);
+			printf("Pion dessiné de couleur : %d\n", inter->pion->couleur);
 
 			if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
 				updateSGF(file, colonne, ligne, tour);
 			}
 			
 			passer = false;
-			//draw_pion(inter->x,inter->y,tour);
 			draw_plateau(width_win(),height_win());
 			if(tour == BLANC) { tour = NOIR; }
 			else { tour = BLANC; }
-			draw_tour_jeu();
+			draw_tour_jeu(espaceCase, nbCase, tour);
 
 			whoIsPlaying();
 		}
