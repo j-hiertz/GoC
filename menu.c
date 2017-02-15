@@ -14,6 +14,7 @@ extern void backToMenu();
 extern void rejouerGame();
 extern void click_pass();
 extern void click_deleteMode();
+extern void draw_pion(int x, int y, colorPion colorPion);
 
 Button** arrayButton = NULL;
 int sizeArray = 0;

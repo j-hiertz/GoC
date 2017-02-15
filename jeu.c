@@ -3,12 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#ifndef LIBRARY_H
-	#define LIBRARY_H
-	#include "dessine.h"
-	#include "menu.h"
-	#include "file.h"
-#endif
+#include "jeu.h"
 
 int nbCase, espaceCase, courFenetre, pointsJoueur1, pointsJoueur2;
 typePlayer joueur1, joueur2;
@@ -246,7 +241,7 @@ bool playIA(int ligne, int colonne) {
 	Intersection *inter = goban->intersections[ligne][colonne];
 
 	int random = rand() % 100;
-	int size = getSizeCaseOccupe();
+	int size = goban->sizeCaseOccuppe;
 	// Algorithme de gestion du passage de tour
 	if(size > (nbCase*nbCase) * 0.5 && size < (nbCase*nbCase) * 0.6){
 		if(random == 1) { click_pass(); return false; }
@@ -524,7 +519,7 @@ void mouse_clicked(int bouton, int x, int y) {
 		int colonne = ((x + (espaceCase /2)) / espaceCase) -1;
 		int ligne = ((y + (espaceCase /2)) / espaceCase) -1;
 
-		if(checkIfPion(goban, ligne, colonne)) {
+		if(goban->intersections[ligne][colonne]->pion) {
 			goban->intersections[ligne][colonne]->pion = NULL;
 			int width = width_win();
 			int height = height_win();

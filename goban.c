@@ -7,18 +7,13 @@
 	#include "dessine.h"
 #endif
 
-int sizeCaseOccuppe;
-
-int getSizeCaseOccupe() {
-	return sizeCaseOccuppe;
-}
 
 void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 	ptrGoban->nbCase = nbCase;
 	ptrGoban->width = width;
 	ptrGoban->height = height;
-	sizeCaseOccuppe = 0;
+	ptrGoban->sizeCaseOccuppe = 0;
 
 	int espaceCase = 0;
 
@@ -41,7 +36,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 		intersections[ligne] = malloc(nbCase * sizeof(**intersections));
 
 		if(intersections[ligne] == NULL){
-			// TODO Erreur + quitter programme
+			exit(EXIT_FAILURE);
 		}
 
 		int posY = espaceCase + (espaceCase * ligne);
@@ -52,6 +47,7 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 
 			intersections[ligne][colonne] = initIntersection(posX, posY);
 
+			// On initialise le chainage des intersections
 			// Différent de la première ligne du Goban
 			if(colonne > 0) {
 				intersections[ligne][colonne]->interGauche = intersections[ligne][colonne-1];
@@ -68,23 +64,6 @@ void initPlateau(Goban* ptrGoban, int width, int height, int nbCase){
 	}
 
 	ptrGoban->intersections = intersections;
-
-	// ============================= TEST PURPOSE =============================
-	for(int ligne = nbCase-1; ligne >= 0; ligne--){
-
-		for(int colonne = nbCase-1; colonne >= 0; colonne--) {
-			//printf("%d:%d ", intersections[ligne][colonne]->x, intersections[ligne][colonne]->y);
-			Intersection* i = intersections[ligne][colonne];
-
-			if(i->interGauche) {
-				printf("%d:%d ", i->interGauche->x, i->interGauche->y);
-			}
-		}
-
-		printf("\n");
-
-	}
-
 }
 
 bool placerPion(Goban* goban, Intersection* intersection, colorPion tour, int colonne, int ligne){
@@ -95,7 +74,6 @@ bool placerPion(Goban* goban, Intersection* intersection, colorPion tour, int co
 		return false;
 	}
 
-
 	// On place le pion avant de vérifier, on supprimera par la suite si nécessaire
 
 	intersection->pion = initPion(tour);
@@ -105,7 +83,7 @@ bool placerPion(Goban* goban, Intersection* intersection, colorPion tour, int co
 
 		printf("Place un pion sur la case : %d:%d\n",ligne,colonne);
 
-		sizeCaseOccuppe++;
+		goban->sizeCaseOccuppe++;
 		return true;
 	}
 
@@ -130,6 +108,11 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 
 	// Etape 3 : On regarde si on prend une chaine adverse
 	Intersection** alreadyUse = malloc(sizeof(Intersection*));
+
+	if(alreadyUse == NULL) {
+		exit(EXIT_FAILURE);
+	}
+
 	int sizeUsed = 1;
 
 	printf("Intersection adresse : %p\n", intersection);
@@ -261,26 +244,6 @@ bool checkPosePion(Goban* goban, Intersection* intersection, colorPion tour) {
 	return liberte;
 }
 
-void supprimerChaine(Intersection*** chaine, int* taille) {
-	for(int i = 0; i < *taille; i++) {
-		printf("INTERSECTION %d;%d COULEUR %d\n",chaine[0][i]->x, chaine[0][i]->y, chaine[0][i]->pion->couleur);
-		free(chaine[0][i]->pion);
-		chaine[0][i]->pion = NULL;
-	}
-}
-
-void reAllocAlreadyUse(Intersection*** alreadyUse, int* taille) {
-
-	// On ré-initialise un tableau de pointeur d'intersection
-	Intersection **temp = realloc(alreadyUse[0], sizeof(Intersection *));
-	if(temp == NULL) {
-		printf("ERREUR WHEN REALLOC MEMORY\n");
-	}
-
-	alreadyUse[0] = temp;
-	*taille = 1;
-}
-
 bool checkLiberte(Intersection* inter) {
 	if(inter->interHaut && inter->interHaut->pion == NULL) { return true; }
 	if(inter->interBas && inter->interBas->pion == NULL) { return true; }
@@ -292,7 +255,6 @@ bool checkLiberte(Intersection* inter) {
 
 bool checkPriseChaine(Intersection *inter, colorPion color, Intersection*** alreadyUse, int *sizeUsed, bool prise) {
 
-//	printf("Taille du tableau alreadyUse : %d\n", *sizeUsed);
 	printf("\nPierre courante, intersection : %p\n", inter);
 
 	if(checkLiberte(inter)){
@@ -367,6 +329,26 @@ bool checkPriseChaine(Intersection *inter, colorPion color, Intersection*** alre
 
 }
 
+void supprimerChaine(Intersection*** chaine, int* taille) {
+	for(int i = 0; i < *taille; i++) {
+		printf("INTERSECTION %d;%d COULEUR %d\n",chaine[0][i]->x, chaine[0][i]->y, chaine[0][i]->pion->couleur);
+		free(chaine[0][i]->pion);
+		chaine[0][i]->pion = NULL;
+	}
+}
+
+void reAllocAlreadyUse(Intersection*** alreadyUse, int* taille) {
+
+	// On ré-initialise un tableau de pointeur d'intersection
+	Intersection **temp = realloc(alreadyUse[0], sizeof(Intersection *));
+	if(temp == NULL) {
+		printf("ERREUR WHEN REALLOC MEMORY\n");
+	}
+
+	alreadyUse[0] = temp;
+	*taille = 1;
+}
+
 bool checkAlreadyUse(Intersection*** intersections, int *taille, Intersection* inter) {
 
 	printf("Il y a %d intersections déjà utilisées\n", *taille);
@@ -394,11 +376,6 @@ bool checkAlreadyUse(Intersection*** intersections, int *taille, Intersection* i
 	intersections[0][( *taille)++] = inter;
 
 	printf("On ajoute l'intersection au tableau, Taille = %d | I = %d\n", *taille, i);
-	return false;
-}
-
-bool checkIfPion(Goban* goban, int x, int y) {
-	if(goban->intersections[x][y]->pion) { return true; }
 	return false;
 }
 

@@ -1,9 +1,10 @@
-#include "file.h"
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "file.h"
 
 // Indication :
 // FF[4] Norme 4 du sgf file
