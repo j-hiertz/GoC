@@ -94,7 +94,10 @@ void calculPoints() {
       printf("Le joueur 2 est à %d points\n", pointsJoueur2);
 		}
 	}
-  draw_score_final(pointsJoueur1, pointsJoueur2, width_win(), height_win());
+
+	endGameSGF(file, "(;RE[B+R]");
+	file = NULL;
+	draw_score_final(pointsJoueur1, pointsJoueur2, width_win(), height_win());
 }
 
 // Dessine un pion
@@ -373,6 +376,9 @@ void backToMenu() {
 void rejouerGame() {
 	courFenetre = 3;
 	reinitDefaultValues();
+	if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
+		file = saveGame(goban, file);
+	}	
 	int w = width_win();
 	int h = height_win();
 	refresh_manager(w, h);
@@ -561,10 +567,6 @@ void key_pressed(KeySym code, char c, int x_souris, int y_souris)
 
 	if (c>' ' && c<'z') {
 		printf("char: %c \n",c);
-
-		if(c == 'e'){
-			endGameSGF(file, "(;RE[B+R]");
-		}
 	}
 
 	printf(" avec pos souris: %d,%d \n",x_souris,y_souris);
