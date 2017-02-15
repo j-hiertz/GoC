@@ -163,10 +163,8 @@ void choixJoueur2();
 
 /**
  * Gere le clic sur la fenetre
+ * bouton: le bouton appuye
+ * x: Position x du clic
+ * y: Position y du clic
  */
 void mouse_clicked(int bouton, int x, int y);
-
-/**
- * Gere le clavier
- */
-void key_pressed(KeySym code, char c, int x_souris, int y_souris);

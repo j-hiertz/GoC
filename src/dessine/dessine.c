@@ -99,7 +99,6 @@ void event_loop()
 				exit(0);
 			nb = XLookupString((XKeyEvent*)&ev, buffer, 20, &touche, 0);
 			buffer[nb] = 0;
-			key_pressed(touche, buffer[0],ev.xbutton.x,ev.xbutton.y);
 			break;
 		default :
 			break;

@@ -350,7 +350,7 @@ void refresh_manager(int width, int height)
 		if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
 			file = saveGame(goban, file);
 		}
-		
+
 		initialized = true;
 		whoIsPlaying();
 	} else if (courFenetre == 4) {
@@ -381,7 +381,7 @@ void rejouerGame() {
 	reinitDefaultValues();
 	if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
 		file = saveGame(goban, file);
-	}	
+	}
 	int w = width_win();
 	int h = height_win();
 	refresh_manager(w, h);
@@ -459,7 +459,7 @@ void validationAdversaire() {
 }
 
 void choixJoueur1() {
-	if(joueur1 == 0) {
+	if(joueur1 == IA) {
 		joueur1 = JOUEUR;
 	} else {
 		joueur1 = IA;
@@ -468,7 +468,7 @@ void choixJoueur1() {
 }
 
 void choixJoueur2() {
-	if(joueur2 == 0) {
+	if(joueur2 == IA) {
 		joueur2 = JOUEUR;
 	} else {
 		joueur2 = IA;
@@ -515,7 +515,7 @@ void mouse_clicked(int bouton, int x, int y) {
 			if(joueur1 == JOUEUR && joueur2 == JOUEUR) {
 				updateSGF(file, colonne, ligne, tour);
 			}
-			
+
 			passer = false;
 			draw_plateau(width_win(),height_win());
 			if(tour == BLANC) { tour = NOIR; }
@@ -535,45 +535,6 @@ void mouse_clicked(int bouton, int x, int y) {
 			draw_plateau(width, height);
 		}
 	}
-}
-
-
-/**
- * on a appuyé sur une touche
- * code: code touche x11 (XK_...)
- * c caractère correspondant si caractere
- * x_souris,y_souris position de la souris
- */
-void key_pressed(KeySym code, char c, int x_souris, int y_souris)
-{
-	switch(code)
-	{
-		case XK_Down:
-			printf("bas\n");
-			break;
-		case XK_Up:
-			printf("haut\n");
-			break;
-		case XK_Left:
-			printf("gauche\n");
-			break;
-		case XK_Right:
-			printf("droite\n");
-			break;
-	//~ case XK_Return:
-	//~ case XK_Shift_L:
-	//~ case XK_Control_R:
-	//~ ....
-		default:
-			break;
-	}
-
-	if (c>' ' && c<'z') {
-		printf("char: %c \n",c);
-	}
-
-	printf(" avec pos souris: %d,%d \n",x_souris,y_souris);
-
 }
 
 int main(int argc, char **argv) {
