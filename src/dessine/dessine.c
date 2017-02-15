@@ -1,8 +1,8 @@
 #ifndef LIBRARY_H
 	#define LIBRARY_H
-	#include "dessine.h"
-	#include "goban.h"
-	#include "menu.h"
+	#include "../../header/dessine.h"
+	#include "../../header/goban.h"
+	#include "../../header/menu.h"
 #endif
 
 #include <string.h>

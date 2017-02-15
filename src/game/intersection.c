@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "intersection.h"
+#include "../../header/intersection.h"
 
 Intersection* initIntersection(int x, int y) {
 

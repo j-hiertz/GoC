@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#include "jeu.h"
+#include "../header/jeu.h"
 
 int nbCase, espaceCase, courFenetre, pointsJoueur1, pointsJoueur2;
 typePlayer joueur1, joueur2;
@@ -95,9 +95,12 @@ void calculPoints() {
 		}
 	}
 
-	endGameSGF(file, "(;RE[B+R]");
-	file = NULL;
+	if(joueur1 == JOUEUR && joueur2 == JOUEUR){
+		endGameSGF(file, "(;RE[B+R]");
+		file = NULL;
+	}
 	draw_score_final(pointsJoueur1, pointsJoueur2, width_win(), height_win());
+	printf("TEST\n");
 }
 
 // Dessine un pion

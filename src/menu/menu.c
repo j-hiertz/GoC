@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "menu.h"
+#include "../../header/menu.h"
 
 extern void newParty();
 extern void loadParty();

@@ -4,7 +4,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "file.h"
+#include "../../header/file.h"
 
 // Indication :
 // FF[4] Norme 4 du sgf file

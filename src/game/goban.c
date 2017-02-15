@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "goban.h"
+#include "../../header/goban.h"
 #ifndef BOOL_H
 	#define BOOL_H
-	#include "boolean.h"
-	#include "dessine.h"
+	#include "../../header/boolean.h"
+	#include "../../header/dessine.h"
 #endif
 
 

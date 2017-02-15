@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "intersection.h"
+#include "../../header/intersection.h"
 
 Pion *initPion(colorPion couleur) {
 
