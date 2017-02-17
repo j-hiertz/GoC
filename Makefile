@@ -19,10 +19,10 @@ jeuDynamique: $(OBJLIB) libDDessine.so
 	gcc -o $@ $(OBJLIB) $(LDFLAGSLIBD) $(LDFLAGS)
 
 libDDessine.so: dessine.o
-	gcc -o lib/$@ -shared dessine.o
+	gcc -o lib/$@ -shared $^
 
 libSDessine.a: dessine.o
-	ar -rv lib/$@ dessine.o
+	ar -rv lib/$@ $^
 
 %.o: %.c
 	gcc -c $< -I./header -fPIC
