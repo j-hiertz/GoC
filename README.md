@@ -25,7 +25,7 @@ A GO game write in C with XLib library
 ## Credits
 
 - Azzouz Mohamed [Ereboras](https://github.com/Ereboras)
-- Hiertz Jordan [Tsuuki](https://github.com/Tsuuki)
+- Hiertz Jordan [j-hiertz](https://github.com/j-hiertz)
 
 ## License
 
